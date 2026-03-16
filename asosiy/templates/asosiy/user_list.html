@@ -1,0 +1,230 @@
+{% extends 'asosiy/asosiy_sahifa.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="arcana-users-wrapper py-5">
+    <div class="container">
+
+        <!-- Header Section -->
+        <div class="arcana-header text-center mb-5">
+            <div class="arcana-label">THE CONGREGATION</div>
+            <h1 class="arcana-title">SEEKERS OF TRUTH</h1>
+            <div class="arcana-divider-center"></div>
+            <p class="arcana-subtitle">A collection of minds dedicated to unraveling the secrets of the digital arcane.</p>
+        </div>
+
+        <!-- Users Grid/Table Panel -->
+        <div class="arcana-panel">
+            <div class="panel-inner">
+                <div class="table-responsive">
+                    <table class="table table-dark table-borderless arcana-table">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 80px;">ID</th>
+                                <th>INITIATE</th>
+                                <th>COMMUNICATION</th>
+                                <th class="text-end">ORIGIN</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td class="text-center">
+                                    <span class="id-tag">#{{ user.id }}</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="avatar-frame">
+                                            {% if user.profil.img %}
+                                                <img src="{{ user.profil.img.url }}" alt="{{ user.username }}" class="user-img">
+                                            {% else %}
+                                                <img src="{% static 'images/arcana.jpg' %}" alt="Default" class="user-img">
+                                            {% endif %}
+                                            <div class="frame-glint"></div>
+                                        </div>
+                                        <div class="username-wrap">
+                                            <span class="username">{{ user.username }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="email-text">
+                                        <i class="bi bi-envelope-at me-2"></i>{{ user.email|default:'Secretum' }}
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <span class="country-tag">
+                                        <i class="bi bi-geo-alt me-1"></i>{{ user.profil.country|default:'Unknown Realm' }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-5">
+                                    <div class="empty-message">THE HALLS ARE EMPTY...</div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
+
+.arcana-users-wrapper {
+    min-height: 100vh;
+    font-family: 'Cinzel', serif;
+    color: #e0e0e0;
+    background: transparent;
+    padding-bottom: 50px;
+}
+
+/* Header Styling */
+.arcana-label {
+    font-size: 0.8rem;
+    letter-spacing: 5px;
+    color: #d4af37;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+.arcana-title {
+    font-weight: 900;
+    font-size: 3rem;
+    letter-spacing: 8px;
+    color: #fff;
+    text-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+}
+.arcana-divider-center {
+    width: 150px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    margin: 20px auto;
+}
+.arcana-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: #999;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Panel & Table Design */
+.arcana-panel {
+    background: rgba(10, 10, 10, 0.5);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 15px;
+    padding: 12px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+.panel-inner {
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.arcana-table {
+    margin-bottom: 0;
+    background: transparent !important;
+}
+.arcana-table thead th {
+    background: rgba(255, 255, 255, 0.02);
+    color: #d4af37;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    padding: 22px;
+    border: none;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.arcana-table tbody tr {
+    transition: 0.3s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+.arcana-table tbody tr:hover {
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.arcana-table td {
+    padding: 20px;
+    vertical-align: middle;
+}
+
+/* ID and Text elements */
+.id-tag {
+    font-size: 0.8rem;
+    color: #555;
+    font-weight: bold;
+}
+.email-text {
+    font-family: 'Playfair Display', serif;
+    color: #aaa;
+    font-size: 0.95rem;
+}
+.country-tag {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+/* Avatar System */
+.avatar-frame {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    padding: 3px;
+    background: linear-gradient(135deg, #d4af37, transparent);
+    border-radius: 50%;
+}
+.user-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #000;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.frame-glint {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.username-wrap {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+}
+.username {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #fff;
+    letter-spacing: 1px;
+    text-transform: none; 
+}
+
+.empty-message {
+    font-style: italic;
+    color: #444;
+    letter-spacing: 3px;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    .arcana-title { font-size: 2rem; }
+    .email-text, .country-tag { font-size: 0.75rem; }
+}
+</style>
+
+{% endblock %}

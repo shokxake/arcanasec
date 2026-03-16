@@ -1,0 +1,209 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArcanaSec - Sacred Cybersecurity Realm</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.4);
+            --dark-bg: #0a0a0a;
+            --card-bg: #0f0f0f;
+            --border-color: #2c2c2c;
+            --text-light: #e0e0e0;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            font-family: 'Playfair Display', serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- NAVBAR OPTIMIZATION --- */
+        .navbar-mystic {
+            background-color: var(--card-bg) !important;
+            border-bottom: 2px solid var(--gold);
+            padding: 0.5rem 0;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.9);
+            z-index: 1050;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--gold) !important;
+            text-shadow: 0 0 10px var(--gold-glow);
+        }
+
+        /* LOGO STYLE */
+        .brand-logo {
+            height: 45px; /* Logotip balandligi */
+            width: auto;
+            margin-right: 12px;
+            filter: drop-shadow(0 0 5px var(--gold-glow));
+            transition: 0.3s ease;
+        }
+
+
+        .nav-link {
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            color: var(--text-light) !important;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--gold) !important;
+            text-shadow: 0 0 8px var(--gold);
+        }
+
+        /* --- PROFILE IMAGE --- */
+        .nav-profile-img {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--gold);
+            object-fit: cover;
+            box-shadow: 0 0 5px var(--gold-glow);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-wrapper {
+            flex: 1;
+            padding: 60px 0;
+            background-image: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%);
+        }
+
+        .welcome-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            letter-spacing: 8px;
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-mystic {
+            font-family: 'Cinzel', serif;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 12px 30px;
+            text-decoration: none;
+            transition: 0.4s;
+        }
+
+        .btn-mystic:hover {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 20px var(--gold-glow);
+        }
+
+        /* --- FOOTER --- */
+        .footer-mystic {
+            background-color: var(--card-bg);
+            border-top: 2px solid var(--gold);
+            padding: 40px 0 20px;
+        }
+
+        .footer-title {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-mystic sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'asosiy_sahifa' %}">
+                <img src="{% static 'images/logo.png' %}" alt="ArcanaSec Logo" class="brand-logo">
+                <span>ARCANASEC</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'users_list' %}">Users</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'challenge_list' %}">Challenges</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'scoreboard' %}">Scoreboard</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                
+                <ul class="navbar-nav ms-auto align-items-center">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" data-bs-toggle="dropdown">
+                                <img src="{% if user.profil.img %}{{ user.profil.img.url }}{% else %}{% static 'images/arcana.jpg' %}{% endif %}" class="nav-profile-img rounded-circle me-2">
+                                <span class="small">{{ user.username|upper }}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary">
+                                <li><a class="dropdown-item text-light small" href="{% url 'profil_ozgartirish' %}">Profile</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="{% url 'logout' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item text-danger small">Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Sign In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link border border-gold px-3 ms-lg-2" href="{% url 'register' %}">Sign Up</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        <div class="container text-center">
+            {% block content %}
+                <h1 class="welcome-title">WELCOME TO ARCANASEC</h1>
+                <p class="lead mb-4 opacity-75">The digital sanctuary for cyber guardians.</p>
+                <a href="{% url 'challenge_list' %}" class="btn-mystic">REVEAL THE ARCANA</a>
+            {% endblock %}
+        </div>
+    </div>
+
+    <footer class="footer-mystic text-light text-center">
+        <div class="container">
+            <h5 class="footer-title">ARCANASEC PROTOCOL</h5>
+            <p class="small opacity-50 mt-3">© 2024. Your destiny is encrypted.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

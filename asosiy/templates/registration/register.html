@@ -1,0 +1,206 @@
+{% extends 'asosiy/asosiy_sahifa.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="arcana-auth-wrapper py-5">
+<div class="container">
+
+    <!-- Header -->
+    <div class="arcana-header text-center mb-5">
+        <div class="arcana-label">THE NEW AWAKENING</div>
+        <h1 class="arcana-title">JOIN THE CONGREGATION</h1>
+        <div class="arcana-divider-center"></div>
+        <p class="arcana-subtitle">Create your digital sigil to begin your journey.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+
+            <div class="arcana-card">
+
+                <div class="form-header text-center mb-4">
+                    <i class="bi bi-person-plus arcana-icon"></i>
+                </div>
+
+                <form method="post" class="arcana-form">
+                    {% csrf_token %}
+
+                    <div class="crispy-container">
+                        {{ form|crispy }}
+                    </div>
+
+                    <div class="auth-actions mt-4">
+                        <button type="submit" class="arcana-btn w-100">
+                            ASCEND TO SEEKER
+                        </button>
+                    </div>
+
+                </form>
+
+                <div class="auth-footer text-center mt-4">
+                    <p class="text-muted small">
+                        Already a member?
+                        <a href="{% url 'login' %}" class="mystic-link">Login here</a>
+                    </p>
+                </div>
+
+                <!-- Decorative Corners -->
+                <div class="corner tl"></div>
+                <div class="corner tr"></div>
+                <div class="corner bl"></div>
+                <div class="corner br"></div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</div>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
+
+.arcana-auth-wrapper{
+    min-height:80vh;
+    font-family:'Cinzel', serif;
+    color:#e0e0e0;
+}
+
+/* HEADER */
+
+.arcana-label{
+    font-size:0.7rem;
+    letter-spacing:4px;
+    color:#d4af37;
+    opacity:0.7;
+}
+
+.arcana-title{
+    font-weight:900;
+    font-size:2.2rem;
+    letter-spacing:5px;
+    color:#fff;
+    text-shadow:0 0 15px rgba(212,175,55,0.3);
+}
+
+.arcana-divider-center{
+    width:80px;
+    height:1px;
+    background:linear-gradient(90deg,transparent,#d4af37,transparent);
+    margin:15px auto;
+}
+
+.arcana-subtitle{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    color:#888;
+    font-size:0.9rem;
+}
+
+/* CARD */
+
+.arcana-card{
+    position:relative;
+    background:rgba(10,10,10,0.85);
+    border:1px solid rgba(212,175,55,0.2);
+    padding:40px 30px;
+    backdrop-filter:blur(25px);
+    box-shadow:0 30px 60px rgba(0,0,0,0.8);
+}
+
+.arcana-icon{
+    font-size:2.5rem;
+    color:#d4af37;
+    filter:drop-shadow(0 0 10px rgba(212,175,55,0.4));
+}
+
+/* FORM */
+
+.arcana-form label{
+    color:#d4af37 !important;
+    font-size:0.7rem;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin-bottom:6px;
+}
+
+.arcana-form input{
+    background:rgba(255,255,255,0.02) !important;
+    border:1px solid rgba(212,175,55,0.2) !important;
+    color:#fff !important;
+    padding:10px !important;
+    font-family:'Playfair Display', serif;
+    border-radius:0 !important;
+}
+
+.arcana-form input:focus{
+    background:rgba(212,175,55,0.05) !important;
+    border-color:#d4af37 !important;
+    box-shadow:0 0 15px rgba(212,175,55,0.2) !important;
+    outline:none;
+}
+
+/* Help text hidden */
+
+.crispy-container .helptext,
+.crispy-container .form-text{
+    display:none !important;
+}
+
+/* BUTTON */
+
+.arcana-btn{
+    padding:14px;
+    color:#000;
+    background:#d4af37;
+    border:none;
+    font-family:'Cinzel', serif;
+    font-weight:700;
+    letter-spacing:2px;
+    cursor:pointer;
+    transition:0.3s;
+    text-transform:uppercase;
+}
+
+.arcana-btn:hover{
+    background:#fff;
+    color:#000;
+    box-shadow:0 0 25px rgba(255,255,255,0.3);
+    transform:translateY(-2px);
+}
+
+/* LINKS */
+
+.mystic-link{
+    color:#d4af37;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+.mystic-link:hover{
+    color:#fff;
+    text-shadow:0 0 5px #d4af37;
+}
+
+/* CORNERS */
+
+.corner{
+    position:absolute;
+    width:15px;
+    height:15px;
+    border:1px solid #d4af37;
+    opacity:0.6;
+}
+
+.tl{top:-2px;left:-2px;border-right:0;border-bottom:0;}
+.tr{top:-2px;right:-2px;border-left:0;border-bottom:0;}
+.bl{bottom:-2px;left:-2px;border-right:0;border-top:0;}
+.br{bottom:-2px;right:-2px;border-left:0;border-top:0;}
+
+</style>
+
+{% endblock %}

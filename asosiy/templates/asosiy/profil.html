@@ -1,0 +1,212 @@
+{% extends 'asosiy/asosiy_sahifa.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="arcana-profile-wrapper py-5">
+    <div class="container">
+
+        <div class="arcana-header text-center mb-5">
+            <div class="arcana-label">IDENTITY ANALECTS</div>
+            <h1 class="arcana-title">THE SEEKER'S ESSENCE</h1>
+            <div class="arcana-divider-center"></div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="arcana-card profile-main-card">
+                    <div class="card-inner text-center">
+
+                        <!-- Avatar -->
+                        <div class="profile-avatar-container mb-4">
+                            <div class="avatar-frame-large">
+                                {% if profil.rasm %}
+                                    <img src="{{ profil.rasm.url }}" alt="{{ profil.nickname }}" class="profile-img">
+                                {% else %}
+                                    <img src="{% static 'images/arcana.jpg' %}" alt="Default" class="profile-img">
+                                {% endif %}
+                                <div class="frame-glint"></div>
+                            </div>
+                        </div>
+
+                        <!-- Info Section -->
+                        <div class="profile-info-grid">
+                            <div class="info-item mb-4">
+                                <span class="info-label">CODENAME</span>
+                                <h2 class="info-value">{{ profil.nickname }}</h2>
+                            </div>
+
+                            <div class="info-separator"></div>
+
+                            <div class="info-details mt-4">
+                                <div class="detail-row">
+                                    <span class="detail-label"><i class="bi bi-envelope-open me-2"></i>ETHER-MAIL</span>
+                                    <span class="detail-value">{{ profil.email }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label"><i class="bi bi-geo-alt me-2"></i>ORIGIN REALM</span>
+                                    <span class="detail-value">{{ profil.davlat|default:"Unknown Lands" }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <div class="profile-actions mt-5">
+                            <a href="#" class="arcana-btn">
+                                MODIFY ESSENCE
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- Decorative Corners -->
+                    <div class="corner tl"></div>
+                    <div class="corner tr"></div>
+                    <div class="corner bl"></div>
+                    <div class="corner br"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
+
+.arcana-profile-wrapper {
+    min-height: 80vh;
+    font-family: 'Cinzel', serif;
+    color: #e0e0e0;
+}
+
+/* Header */
+.arcana-label {
+    font-size: 0.8rem;
+    letter-spacing: 5px;
+    color: #d4af37;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+.arcana-title {
+    font-weight: 900;
+    font-size: 2.5rem;
+    letter-spacing: 6px;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+.arcana-divider-center {
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    margin: 20px auto;
+}
+
+/* Profile Card */
+.arcana-card {
+    position: relative;
+    background: rgba(15, 15, 15, 0.7);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    padding: 40px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    border-radius: 4px;
+}
+
+/* Avatar */
+.avatar-frame-large {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto;
+    padding: 5px;
+    background: linear-gradient(135deg, #d4af37, #7a631d, #d4af37);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+}
+.profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #000;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+/* Info Section */
+.info-label {
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    color: #d4af37;
+    display: block;
+    margin-bottom: 5px;
+}
+.info-value {
+    font-weight: 700;
+    font-size: 2rem;
+    color: #fff;
+    margin: 0;
+}
+.info-separator {
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.4), transparent);
+    margin: 0 auto;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 4px;
+}
+.detail-label {
+    font-size: 0.75rem;
+    color: #888;
+    letter-spacing: 1px;
+}
+.detail-value {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: #d4af37;
+}
+
+/* Button */
+.arcana-btn {
+    position: relative;
+    display: inline-block;
+    padding: 12px 30px;
+    color: #d4af37;
+    text-decoration: none;
+    border: 1px solid #d4af37;
+    background: transparent;
+    transition: 0.4s;
+    overflow: hidden;
+}
+.arcana-btn:hover {
+    background: #d4af37;
+    color: #000;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+}
+
+/* Decorative Corners */
+.corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d4af37;
+}
+.tl { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
+.tr { top: -2px; right: -2px; border-left: 0; border-bottom: 0; }
+.bl { bottom: -2px; left: -2px; border-right: 0; border-top: 0; }
+.br { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
+
+@media (max-width: 576px) {
+    .info-value { font-size: 1.5rem; }
+    .arcana-card { padding: 25px; }
+}
+</style>
+
+{% endblock %}

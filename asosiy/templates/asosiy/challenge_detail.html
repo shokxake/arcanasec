@@ -1,0 +1,333 @@
+{% extends 'asosiy/asosiy_sahifa.html' %}
+{% load static %}
+
+{% block content %}
+<div class="arcana-detail-wrapper py-5">
+    <div class="container">
+        
+        <!-- Back Link -->
+        <div class="mb-4 text-start">
+            <a href="{% url 'challenge_list' %}" class="arcana-back-link">
+                <i class="bi bi-arrow-left-short"></i> RETURN TO DECK
+            </a>
+        </div>
+
+        <div class="row g-5">
+            <!-- Left Side: Challenge Card -->
+            <div class="col-lg-5">
+                <div class="arcana-main-card">
+                    <div class="arcana-inner">
+                        <!-- Corner Decorations -->
+                        <div class="arc-ornament top-l"></div>
+                        <div class="arc-ornament top-r"></div>
+                        <div class="arc-ornament bot-l"></div>
+                        <div class="arc-ornament bot-r"></div>
+
+                        <div class="arc-card-content text-center">
+                            <div class="arc-cat-top">{{ challenge.kategoriya|title|default:"General" }}</div>
+                            
+                            <div class="arc-symbol-large my-4">
+                                <div class="symbol-frame">
+                                    {% if bloklangan %}
+                                        <i class="bi bi-lock-fill text-danger"></i>
+                                    {% else %}
+                                        <i class="bi bi-shield-lock-fill text-gold"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="symbol-aura"></div>
+                            </div>
+
+                            <h2 class="arc-title-main">{{ challenge.nomi|upper }}</h2>
+                            
+                            <div class="arc-stats-grid mt-4">
+                                <div class="stat-item">
+                                    <span class="label">RANK</span>
+                                    <span class="value">{{ challenge.get_qiyinlik_display|upper }}</span>
+                                </div>
+                                <div class="stat-divider"></div>
+                                <div class="stat-item">
+                                    <span class="label">POINTS</span>
+                                    <span class="value text-gold">{{ challenge.ochko }}</span>
+                                </div>
+                                <div class="stat-divider"></div>
+                                <div class="stat-item">
+                                    <span class="label">SOLVERS</span>
+                                    <span class="value">{{ challenge.solved_count }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Details & Submission -->
+            <div class="col-lg-7">
+                <div class="arcana-details-panel">
+                    <div class="panel-header mb-4">
+                        <h4 class="panel-title">THE REVELATION</h4>
+                        <div class="arcana-divider-sm"></div>
+                    </div>
+
+                    <div class="panel-body">
+                        <!-- Challenge Description: Left Aligned and Custom Font -->
+                        <div class="description-container mb-4">
+                            <p class="description-text">{{ challenge.tavsif|linebreaksbr }}</p>
+                        </div>
+
+                        {% if challenge.fayl %}
+                        <div class="mt-4 text-start">
+                            <a href="{{ challenge.fayl.url }}" download class="arcana-download-btn">
+                                <i class="bi bi-download"></i> DOWNLOAD ARTIFACT
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        <div class="submission-section mt-5">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="attempts-count">ATTEMPTS: {{ urinishlar_soni }} / {{ max_urinish }}</span>
+                                <span class="author-tag">CREATOR: {{ challenge.author.username }}</span>
+                            </div>
+
+                            {% if bloklangan %}
+                                <div class="arcana-input-group blocked">
+                                    <input type="text" class="form-control" value="PATHWAY BLOCKED" readonly>
+                                    <button class="btn" disabled><i class="bi bi-slash-circle"></i></button>
+                                </div>
+                            {% else %}
+                                <form method="post" action="{% url 'yechish' challenge.id %}">
+                                    {% csrf_token %}
+                                    <div class="arcana-input-group">
+                                        <input type="text" name="flag" class="form-control" placeholder="ENTER THE SECRET KEY..." required>
+                                        <button type="submit" class="btn"><i class="bi bi-key-fill"></i> SUBMIT</button>
+                                    </div>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- First Solvers -->
+                {% if first_solvers_data %}
+                <div class="arcana-solvers-panel mt-4">
+                    <h5 class="solvers-title mb-3">FIRST ASCENDANTS</h5>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-borderless arcana-mini-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>ASCENDANT</th>
+                                    <th>ORIGIN</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for solver in first_solvers_data %}
+                                <tr>
+                                    <td>{{ solver.id }}</td>
+                                    <td class="d-flex align-items-center gap-2">
+                                        <img src="{{ solver.img }}" class="solver-img" alt="avatar">
+                                        <span>{{ solver.username }}</span>
+                                    </td>
+                                    <td>{{ solver.country|default:"-" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+    /* Wrapper background olib tashlandi, body foni ko'rinishi uchun */
+    .arcana-detail-wrapper {
+        min-height: 100vh;
+        font-family: 'Cinzel', serif;
+        color: #e0e0e0;
+        background: transparent; /* Fon olib tashlandi */
+    }
+
+    /* Back Link */
+    .arcana-back-link {
+        color: #d4af37;
+        text-decoration: none;
+        font-size: 0.8rem;
+        letter-spacing: 2px;
+        transition: 0.3s;
+        opacity: 0.7;
+    }
+    .arcana-back-link:hover {
+        opacity: 1;
+        letter-spacing: 3px;
+        color: #d4af37;
+    }
+
+    /* Left Card: Ichki qismlar kontrast uchun saqlab qolindi */
+    .arcana-main-card {
+        background: rgba(15, 15, 15, 0.4); /* Juda shaffof fon */
+        border: 1px solid rgba(212, 175, 55, 0.1);
+        border-radius: 12px;
+        padding: 15px;
+        position: sticky;
+        top: 100px; /* Navbar balandligini hisobga olgan holda */
+    }
+
+    .arcana-inner {
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        border-radius: 8px;
+        padding: 40px 20px;
+        position: relative;
+    }
+
+    .arc-ornament { position: absolute; width: 20px; height: 20px; border: 1px solid #d4af37; opacity: 0.5; }
+    .top-l { top: 6px; left: 6px; border-right: 0; border-bottom: 0; }
+    .top-r { top: 6px; right: 6px; border-left: 0; border-bottom: 0; }
+    .bot-l { bottom: 6px; left: 6px; border-right: 0; border-top: 0; }
+    .bot-r { bottom: 6px; right: 6px; border-left: 0; border-top: 0; }
+
+    .arc-cat-top {
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        color: #d4af37;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+    }
+
+    .arc-symbol-large {
+        position: relative;
+        display: inline-block;
+    }
+    .symbol-frame {
+        font-size: 4rem;
+        position: relative;
+        z-index: 2;
+        filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4));
+    }
+    .text-gold { color: #d4af37; }
+
+    .symbol-aura {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120px; height: 120px;
+        background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+    }
+
+    .arc-title-main {
+        font-weight: 700;
+        letter-spacing: 4px;
+        color: #fff;
+        margin-top: 15px;
+    }
+
+    .arc-stats-grid {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+    }
+    .stat-item { display: flex; flex-direction: column; }
+    .stat-item .label { font-size: 0.6rem; color: #888; letter-spacing: 1px; }
+    .stat-item .value { font-size: 0.9rem; font-weight: 700; }
+    .stat-divider { width: 1px; height: 30px; background: rgba(212, 175, 55, 0.2); }
+
+    /* Right Panel: Shafofroq qilindi */
+    .arcana-details-panel {
+        background: rgba(20, 20, 20, 0.3); /* Kamroq qora */
+        border: 1px solid rgba(212, 175, 55, 0.1);
+        padding: 30px;
+        border-radius: 12px;
+    }
+
+    .panel-title { color: #d4af37; letter-spacing: 3px; font-size: 1.1rem; text-align: left; }
+    .arcana-divider-sm { width: 40px; height: 2px; background: #d4af37; margin: 10px 0; }
+
+    /* Description Styling: Left Aligned and serif font */
+    .description-container {
+        text-align: left;
+        padding: 10px 0;
+    }
+    .description-text {
+        font-family: 'Playfair Display', serif;
+        line-height: 1.7;
+        font-size: 1.1rem;
+        color: #dfdfdf;
+        font-weight: 400;
+        letter-spacing: 0.3px;
+    }
+
+    .arcana-download-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        border: 1px solid #d4af37;
+        color: #d4af37;
+        text-decoration: none;
+        font-size: 0.75rem;
+        letter-spacing: 2px;
+        transition: 0.3s;
+    }
+    .arcana-download-btn:hover {
+        background: #d4af37;
+        color: #000;
+    }
+
+    /* Input Group */
+    .arcana-input-group {
+        display: flex;
+        border: 1px solid #2c2c2c;
+        background: rgba(0,0,0,0.5);
+        padding: 5px;
+        border-radius: 4px;
+        transition: 0.3s;
+    }
+    .arcana-input-group:focus-within {
+        border-color: #d4af37;
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+    .arcana-input-group.blocked { opacity: 0.5; border-color: #444; }
+    
+    .arcana-input-group input {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-family: 'Cinzel', serif;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+    }
+    .arcana-input-group input:focus { background: transparent; color: #fff; box-shadow: none; }
+
+    .arcana-input-group .btn {
+        background: #d4af37;
+        color: #000;
+        font-weight: 700;
+        font-size: 0.75rem;
+        padding: 8px 20px;
+        border-radius: 2px;
+    }
+
+    .attempts-count, .author-tag { font-size: 0.65rem; color: #666; letter-spacing: 1px; }
+
+    /* Solvers Table: Fon shaffofroq */
+    .arcana-solvers-panel {
+        background: rgba(15, 15, 15, 0.4);
+        border: 1px solid rgba(212, 175, 55, 0.1);
+        padding: 20px;
+        border-radius: 8px;
+    }
+    .solvers-title { font-size: 0.8rem; letter-spacing: 2px; color: #d4af37; text-align: left; }
+    .arcana-mini-table { font-size: 0.8rem; background: transparent !important; }
+    .arcana-mini-table th { color: #555; font-weight: 400; border: none; }
+    .arcana-mini-table td { vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; }
+    
+    .solver-img {
+        width: 24px; height: 24px;
+        border-radius: 50%;
+        border: 1px solid #d4af37;
+        object-fit: cover;
+    }
+</style>
+{% endblock %}

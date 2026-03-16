@@ -1,0 +1,247 @@
+{% extends 'asosiy/asosiy_sahifa.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="arcana-scoreboard-wrapper py-5">
+<div class="container">
+
+    <!-- Header Section -->
+    <div class="arcana-header text-center mb-5">
+        <div class="arcana-label">HALL OF FAME</div>
+        <h1 class="arcana-title">THE GRAND ASCENSION</h1>
+        <div class="arcana-divider-center"></div>
+        <p class="arcana-subtitle">Behold the seekers who have decoded the ancient manuscripts and braved the trials.</p>
+    </div>
+
+    <!-- Leaderboard Table -->
+    <div class="arcana-panel">
+        <div class="panel-inner">
+            <div class="table-responsive">
+                <table class="table table-dark table-borderless arcana-table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">RANK</th>
+                            <th>ASCENDANT</th>
+                            <th>ORIGIN</th>
+                            <th class="text-center">REVELATIONS</th>
+                            <th class="text-center">PENALTY</th>
+                            <th class="text-center">ESSENCE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in scoreboard_data %}
+                        <tr class="{% if item.user == request.user %}current-user-row{% endif %}">
+                            <td class="text-center rank-cell">
+                                <div class="rank-badge">{{ item.rank }}</div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="avatar-frame">
+                                        {% if item.user.profil.img %}
+                                            <img src="{{ item.user.profil.img.url }}" alt="{{ item.user.username }}" class="solver-img">
+                                        {% else %}
+                                            <img src="{% static 'images/arcana.jpg' %}" alt="Default" class="solver-img">
+                                        {% endif %}
+                                        <div class="frame-glint"></div>
+                                    </div>
+                                    <div class="username-wrap">
+                                        <span class="username">{{ item.user.username }}</span>
+                                        {% if item.user == request.user %}
+                                            <span class="self-tag">(YOU)</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="origin-cell">
+                                <span class="country"><i class="bi bi-geo-alt me-1"></i>{{ item.user.profil.country|default:"Unknown" }}</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="count-value text-success">{{ item.solved_count }}</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="count-value text-danger">
+                                    {% if item.penalty > 0 %}-{{ item.penalty }}{% else %}0{% endif %}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <div class="total-score-box">
+                                    <span class="score {% if item.total_score < 0 %}text-danger{% else %}text-gold{% endif %}">
+                                        {{ item.total_score }}
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <div class="empty-message">NO ASCENDANTS RECORDED YET...</div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<style>
+/* Font import */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
+
+.arcana-scoreboard-wrapper {
+    min-height: 100vh;
+    font-family: 'Cinzel', serif;
+    color: #e0e0e0;
+    background: transparent;
+}
+
+/* Header */
+.arcana-label {
+    font-size: 0.8rem;
+    letter-spacing: 4px;
+    color: #d4af37;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+.arcana-title {
+    font-weight: 900;
+    font-size: 3rem;
+    letter-spacing: 6px;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+.arcana-divider-center {
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    margin: 20px auto;
+}
+.arcana-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: #aaa;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Panel & Table */
+.arcana-panel {
+    background: rgba(15, 15, 15, 0.4);
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    border-radius: 15px;
+    padding: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.panel-inner {
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.arcana-table {
+    margin-bottom: 0;
+    background: transparent !important;
+}
+.arcana-table thead th {
+    background: rgba(20, 20, 20, 0.8);
+    color: #d4af37;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    padding: 20px;
+    border: none;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.arcana-table tbody tr {
+    transition: 0.4s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+.arcana-table tbody tr:hover {
+    background: rgba(212, 175, 55, 0.05);
+}
+.current-user-row {
+    background: rgba(212, 175, 55, 0.1) !important;
+}
+
+.arcana-table td {
+    padding: 20px;
+    vertical-align: middle;
+}
+
+/* Rank */
+.rank-badge {
+    font-weight: 700;
+    color: #888;
+    font-size: 1.1rem;
+}
+tr:nth-child(1) .rank-badge { color: #d4af37; font-size: 1.5rem; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+tr:nth-child(2) .rank-badge { color: #c0c0c0; }
+tr:nth-child(3) .rank-badge { color: #cd7f32; }
+
+/* Avatar & Username */
+.avatar-frame {
+    position: relative;
+    width: 45px;
+    height: 45px;
+    padding: 3px;
+    background: linear-gradient(135deg, #d4af37, transparent);
+    border-radius: 50%;
+}
+.solver-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #000;
+}
+.frame-glint {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.username-wrap { display: flex; flex-direction: column; }
+.username { font-weight: 700; font-size: 1rem; color: #fff; letter-spacing: 1px; }
+.self-tag { font-size: 0.6rem; color: #d4af37; font-weight: 400; }
+
+.origin-cell .country {
+    font-size: 0.8rem;
+    color: #888;
+    font-family: 'Playfair Display', serif;
+}
+
+.count-value {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+/* Score Box */
+.total-score-box {
+    display: inline-block;
+    padding: 5px 15px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 4px;
+    min-width: 60px;
+}
+.text-gold { color: #d4af37; }
+.score { font-size: 1.2rem; font-weight: 900; }
+
+.empty-message {
+    font-style: italic;
+    color: #555;
+    letter-spacing: 2px;
+}
+
+/* Mobile Adaptivity */
+@media (max-width: 768px) {
+    .arcana-title { font-size: 2rem; }
+    .origin-cell { display: none; }
+}
+</style>
+
+{% endblock %}
