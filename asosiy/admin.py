@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profil, Challenge, Yechim, Urinish, BloklanganChallenge
+from .models import Profil, Challenge, Yechim, Urinish, BloklanganChallenge, Contest
 from django.db.models import Count
 
 admin.site.register(Profil)
