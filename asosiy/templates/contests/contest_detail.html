@@ -1,0 +1,150 @@
+{% extends 'asosiy/asosiy_sahifa.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Contest uchun maxsus Navbar -->
+{% include 'includes/contest_navbar.html' %}
+
+<div class="contest-detail-wrapper py-5" style="background-color: #0b0c10; min-height: 100vh; color: #c5c6c7;">
+    <div class="container">
+        
+        <!-- Header qismi: Musobaqa nomi va holati -->
+        <div class="text-center mb-5">
+            <h1 class="display-3 font-cinzel text-white fw-bold mb-3" style="letter-spacing: 5px; text-shadow: 0 0 20px rgba(102, 252, 241, 0.5);">
+                {{ contest.nomi|upper }}
+            </h1>
+            
+            <div class="d-flex justify-content-center gap-2 mb-4">
+                <span class="badge rounded-pill bg-cyan-outline">TYPE: {{ contest.get_tipi_display|upper }}</span>
+                <span class="badge rounded-pill bg-grey-outline">FORMAT: {{ contest.get_formati_display|upper }}</span>
+                <span class="badge rounded-pill bg-purple-outline">PARTICIPATION: {{ contest.get_qatnashish_display|upper }}</span>
+            </div>
+
+            <!-- Musobaqa vaqti va statusi -->
+            <div class="contest-status-box d-inline-block p-3 rounded border border-secondary bg-dark-soft">
+                <div class="d-flex align-items-center gap-4">
+                    <div class="text-start">
+                        <small class="text-uppercase text-muted d-block">Start Date</small>
+                        <span class="text-info">{{ contest.start_date|date:"d M Y, H:i" }}</span>
+                    </div>
+                    <div class="vr bg-secondary"></div>
+                    <div class="text-start">
+                        <small class="text-uppercase text-muted d-block">Status</small>
+                        <span class="text-success"><i class="bi bi-record-fill animate-flicker"></i> LIVE / ACTIVE</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Markaziy ma'lumot bloki -->
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="card bg-dark-card border-0 shadow-lg position-relative overflow-hidden">
+                    <!-- Bezak uchun chiziqlar -->
+                    <div class="corner-decoration top-left"></div>
+                    <div class="corner-decoration bottom-right"></div>
+
+                    <div class="card-body p-5">
+                        <h2 class="text-center text-white mb-4 border-bottom border-secondary pb-3 font-cinzel">
+                            {{ contest.nomi }} — Mission Briefing
+                        </h2>
+                        
+                        <div class="mission-description fs-5 lh-lg mb-5 text-justify">
+                            {% if contest.tavsif %}
+                                {{ contest.tavsif|linebreaks }}
+                            {% else %}
+                                <p class="text-center italic opacity-50">Ushbu musobaqa uchun tavsif hali qo'shilmagan.</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Harakat tugmalari -->
+                        <div class="action-zone text-center mt-5 pt-4 border-top border-secondary">
+                            {% if not is_joined %}
+                                <h4 class="text-gold mb-4 fw-light">Are you ready to enter the ritual?</h4>
+                                <form action="{% url 'join_contest' contest.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-join-ritual btn-lg px-5 py-3">
+                                        JOIN CONTEST <i class="bi bi-shield-shaded ms-2"></i>
+                                    </button>
+                                </form>
+                            {% else %}
+                                <div class="joined-status mb-4">
+                                    <span class="text-success fs-4"><i class="bi bi-check2-all me-2"></i> You are a registered participant.</span>
+                                </div>
+                                <a href="{% url 'contest_challenges' contest.id %}" class="btn btn-outline-cyan btn-lg px-5">
+                                    ENTER CHALLENGES <i class="bi bi-terminal ms-2"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Maxsus Ranglar va Fontlar */
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Share+Tech+Mono&display=swap');
+
+    .font-cinzel { font-family: 'Cinzel', serif; }
+    .bg-dark-soft { background: rgba(31, 40, 51, 0.4); }
+    .bg-dark-card { background: #1f2833; border-radius: 15px; }
+    .text-gold { color: #d4af37; }
+
+    /* Badge Styles */
+    .bg-cyan-outline { border: 1px solid #66fcf1; color: #66fcf1; background: transparent; }
+    .bg-grey-outline { border: 1px solid #c5c6c7; color: #c5c6c7; background: transparent; }
+    .bg-purple-outline { border: 1px solid #833ab4; color: #833ab4; background: transparent; }
+
+    /* Join Button */
+    .btn-join-ritual {
+        background: transparent;
+        border: 2px solid #66fcf1;
+        color: #66fcf1;
+        transition: all 0.4s ease;
+        font-family: 'Share Tech Mono', monospace;
+        letter-spacing: 2px;
+    }
+    .btn-join-ritual:hover {
+        background: #66fcf1;
+        color: #0b0c10;
+        box-shadow: 0 0 30px rgba(102, 252, 241, 0.4);
+        transform: translateY(-3px);
+    }
+
+    .btn-outline-cyan {
+        border: 1px solid #45a29e;
+        color: #45a29e;
+    }
+    .btn-outline-cyan:hover {
+        background: #45a29e;
+        color: white;
+    }
+
+    /* Bezaklar */
+    .corner-decoration {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border: 3px solid #45a29e;
+    }
+    .top-left { top: 0; left: 0; border-right: none; border-bottom: none; }
+    .bottom-right { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+    /* Animatsiya */
+    .animate-flicker {
+        animation: flicker 1.5s infinite alternate;
+    }
+    @keyframes flicker {
+        0% { opacity: 0.4; }
+        100% { opacity: 1; text-shadow: 0 0 10px #28a745; }
+    }
+
+    .mission-description {
+        color: #a4a5a6;
+        font-family: 'Share Tech Mono', monospace;
+    }
+</style>
+
+{% endblock %}

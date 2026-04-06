@@ -1,0 +1,147 @@
+{% extends 'asosiy/asosiy_sahifa.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Musobaqa Navbari -->
+{% include 'includes/contest_navbar.html' %}
+
+<div class="contest-participants-wrapper pb-5" style="background-color: #0b0c10; min-height: 100vh;">
+    <div class="container">
+        
+        <!-- Sahifa Sarlavhasi -->
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h2 class="text-white font-cinzel fw-bold mb-2" style="letter-spacing: 3px;">
+                    REGISTERED OPERATIVES
+                </h2>
+                <div class="h-line mx-auto"></div>
+                <p class="text-muted mt-3 font-mono small text-uppercase">
+                    Total active connections: <span class="text-cyan">{{ participants.count }}</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Ishtirokchilar Grid -->
+        <div class="row g-4">
+            {% for participant in participants %}
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="operative-card">
+                        <div class="card-glow"></div>
+                        <div class="p-3 position-relative">
+                            
+                            <!-- Profil Rasmi va Username -->
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="avatar-wrapper me-3">
+                                    {% if participant.user.profil.img %}
+                                        <img src="{{ participant.user.profil.img.url }}" alt="avatar" class="img-fluid rounded-circle border-cyan">
+                                    {% else %}
+                                        <img src="{% static 'default_user.png' %}" alt="default" class="img-fluid rounded-circle border-cyan">
+                                    {% endif %}
+                                    <div class="online-indicator"></div>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <h6 class="text-white mb-0 text-truncate font-mono">{{ participant.user.username }}</h6>
+                                    <small class="text-cyan opacity-75 small">ID: #{{ participant.user.id|add:1000 }}</small>
+                                </div>
+                            </div>
+
+                            <!-- Ma'lumotlar -->
+                            <div class="operative-info font-mono small">
+                                <div class="d-flex justify-content-between border-bottom border-dark py-1">
+                                    <span class="text-muted">ORIGIN:</span>
+                                    <span class="text-white">{{ participant.user.profil.country|default:"Unknown"|upper }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between border-bottom border-dark py-1">
+                                    <span class="text-muted">JOINED:</span>
+                                    <span class="text-white">{{ participant.joined_at|date:"d M, H:i" }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-1">
+                                    <span class="text-muted">STATUS:</span>
+                                    <span class="text-success">AUTHORIZED</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center py-5">
+                    <div class="alert alert-dark bg-dark-card border-secondary text-muted font-mono">
+                        <i class="bi bi-exclamation-triangle me-2"></i> No operatives have breached this ritual yet.
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    .font-mono { font-family: 'Share Tech Mono', monospace; }
+    .text-cyan { color: #66fcf1; }
+    .bg-dark-card { background: #1f2833; }
+
+    .h-line {
+        height: 2px;
+        width: 100px;
+        background: linear-gradient(90deg, transparent, #66fcf1, transparent);
+    }
+
+    /* Operative Card Style */
+    .operative-card {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .operative-card:hover {
+        border-color: #66fcf1;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Avatar & Status */
+    .avatar-wrapper {
+        position: relative;
+        width: 50px;
+        height: 50px;
+    }
+    .border-cyan { border: 2px solid #45a29e; padding: 2px; }
+    
+    .online-indicator {
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        width: 12px;
+        height: 12px;
+        background: #28a745;
+        border: 2px solid #161b22;
+        border-radius: 50%;
+        box-shadow: 0 0 5px #28a745;
+    }
+
+    /* Glow Effect on Hover */
+    .card-glow {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: radial-gradient(circle at 50% 0%, rgba(102, 252, 241, 0.1), transparent 70%);
+        opacity: 0;
+        transition: 0.3s;
+    }
+    .operative-card:hover .card-glow { opacity: 1; }
+
+    /* Info Section */
+    .operative-info span { letter-spacing: 1px; }
+    .border-dark { border-color: #30363d !important; }
+
+    /* Custom Scrollbar for the whole page */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0b0c10; }
+    ::-webkit-scrollbar-thumb { background: #45a29e; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #66fcf1; }
+</style>
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends 'asosiy/asosiy_sahifa.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Musobaqa Navbari -->
+{% include 'includes/contest_navbar.html' %}
+
+<div class="contest-challenges-wrapper pb-5" style="background-color: #0b0c10; min-height: 100vh;">
+    <div class="container">
+        
+        <!-- Statistika paneli -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="stats-bar d-flex justify-content-around py-3 rounded">
+                    <div class="stat-item text-center">
+                        <span class="d-block text-muted small uppercase">Total Tasks</span>
+                        <span class="text-white fs-4 fw-bold">{{ challenges.count }}</span>
+                    </div>
+                    <div class="stat-item text-center">
+                        <span class="d-block text-muted small uppercase">Solved By You</span>
+                        <span class="text-cyan fs-4 fw-bold">{{ solved_challenges|length }}</span>
+                    </div>
+                    <div class="stat-item text-center">
+                        <span class="d-block text-muted small uppercase">Progress</span>
+                        <span class="text-gold fs-4 fw-bold">
+                            {% widthratio solved_challenges|length challenges.count 100 %}%
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Challenges Grid -->
+        <div class="row g-4">
+            {% for challenge in challenges %}
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="challenge-card {% if challenge.id in solved_challenges %}card-solved{% endif %}">
+                        <!-- Card Header: Category & Points -->
+                        <div class="card-header-custom d-flex justify-content-between align-items-center">
+                            <span class="category-tag text-uppercase">{{ challenge.kategoriya|default:"General" }}</span>
+                            <span class="points-badge">{{ challenge.ochko }} PTS</span>
+                        </div>
+
+                        <!-- Card Body -->
+                        <div class="card-body-custom text-center py-4">
+                            <h5 class="challenge-title mb-3">{{ challenge.nomi }}</h5>
+                            
+                            <!-- Difficulty Level Indicator -->
+                            <div class="difficulty-dots mb-3">
+                                <span class="dot {% if challenge.qiyinlik == 'easy' or challenge.qiyinlik == 'medium' or challenge.qiyinlik == 'hard' %}active-easy{% endif %}"></span>
+                                <span class="dot {% if challenge.qiyinlik == 'medium' or challenge.qiyinlik == 'hard' %}active-medium{% endif %}"></span>
+                                <span class="dot {% if challenge.qiyinlik == 'hard' %}active-hard{% endif %}"></span>
+                            </div>
+                        </div>
+
+                        <!-- Card Footer: Action -->
+                        <div class="card-footer-custom px-3 pb-3">
+                            {% if challenge.id in solved_challenges %}
+                                <div class="solved-banner py-2">
+                                    <i class="bi bi-check-circle-fill me-2"></i> SOLVED
+                                </div>
+                            {% else %}
+                                <a href="{% url 'challenge_detail' challenge.id %}" class="btn btn-view-task w-100">
+                                    OPEN TASK <i class="bi bi-unlock-fill ms-1"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center py-5">
+                    <h3 class="text-muted font-cinzel">No challenges found for this ritual.</h3>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    /* Statistika Paneli */
+    .stats-bar {
+        background: #1f2833;
+        border: 1px solid #45a29e;
+        box-shadow: 0 0 15px rgba(102, 252, 241, 0.1);
+    }
+    .text-cyan { color: #66fcf1; }
+    .text-gold { color: #d4af37; }
+
+    /* Challenge Card Dizayni */
+    .challenge-card {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        font-family: 'Share Tech Mono', monospace;
+    }
+
+    .challenge-card:hover {
+        transform: translateY(-5px);
+        border-color: #66fcf1;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4), 0 0 10px rgba(102, 252, 241, 0.2);
+    }
+
+    /* Solved Holati */
+    .card-solved {
+        border-color: #28a745 !important;
+        opacity: 0.85;
+    }
+    .card-solved::before {
+        content: "COMPLETED";
+        position: absolute;
+        top: 15px;
+        left: -30px;
+        background: #28a745;
+        color: white;
+        padding: 2px 40px;
+        font-size: 0.6rem;
+        transform: rotate(-45deg);
+        z-index: 1;
+    }
+
+    .category-tag {
+        font-size: 0.7rem;
+        color: #45a29e;
+        background: rgba(69, 162, 158, 0.1);
+        padding: 2px 8px;
+        border-radius: 4px;
+    }
+
+    .points-badge {
+        font-size: 0.8rem;
+        color: #66fcf1;
+        font-weight: bold;
+    }
+
+    .challenge-title {
+        color: #fff;
+        letter-spacing: 1px;
+    }
+
+    /* Difficulty Dots */
+    .difficulty-dots .dot {
+        height: 6px;
+        width: 15px;
+        background: #30363d;
+        display: inline-block;
+        margin: 0 2px;
+        border-radius: 2px;
+    }
+    .active-easy { background: #28a745 !important; box-shadow: 0 0 5px #28a745; }
+    .active-medium { background: #ffc107 !important; box-shadow: 0 0 5px #ffc107; }
+    .active-hard { background: #dc3545 !important; box-shadow: 0 0 5px #dc3545; }
+
+    /* Buttons */
+    .btn-view-task {
+        background: transparent;
+        border: 1px solid #45a29e;
+        color: #45a29e;
+        font-size: 0.8rem;
+        transition: 0.3s;
+    }
+    .btn-view-task:hover {
+        background: #45a29e;
+        color: #0b0c10;
+    }
+
+    .solved-banner {
+        background: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+        text-align: center;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+
+    .card-header-custom { padding: 12px 15px; border-bottom: 1px solid #30363d; }
+</style>

@@ -1,0 +1,169 @@
+{% extends 'asosiy/asosiy_sahifa.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Musobaqa Navbari -->
+{% include 'includes/contest_navbar.html' %}
+
+<div class="contest-scoreboard-wrapper pb-5" style="background-color: #0b0c10; min-height: 100vh;">
+    <div class="container">
+        
+        <!-- TOP 3 OPERATIVES (Podium) -->
+        <div class="row mb-5 justify-content-center align-items-end g-3">
+            {% for entry in scoreboard_data|slice:":3" %}
+                <div class="col-md-3 order-{{ forloop.counter }}">
+                    <div class="podium-card rank-{{ forloop.counter }}">
+                        <div class="rank-label font-cinzel">#{{ forloop.counter }}</div>
+                        <div class="avatar-container mb-3">
+                            {% if entry.user.profil.img %}
+                                <img src="{{ entry.user.profil.img.url }}" class="podium-img">
+                            {% else %}
+                                <img src="{% static 'default_user.png' %}" class="podium-img">
+                            {% endif %}
+                            <div class="glow-ring"></div>
+                        </div>
+                        <h5 class="text-white font-mono text-truncate">{{ entry.user.username }}</h5>
+                        <div class="score-display">
+                            <span class="pts">{{ entry.total_score }}</span> <small>PTS</small>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- FULL RANKING TABLE -->
+        <div class="row">
+            <div class="col-12">
+                <div class="table-terminal-container shadow-lg">
+                    <div class="terminal-header d-flex justify-content-between px-3 py-2">
+                        <span class="terminal-title"><i class="bi bi-cpu me-2"></i> SYSTEM_RANKINGS.LOG</span>
+                        <div class="terminal-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0 custom-sb-table">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">RANK</th>
+                                    <th>OPERATIVE</th>
+                                    <th>COUNTRY</th>
+                                    <th class="text-center">SOLVED</th>
+                                    <th class="text-center">PENALTY</th>
+                                    <th class="text-end pe-4">TOTAL SCORE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entry in scoreboard_data %}
+                                <tr class="{% if entry.user == request.user %}current-user-row{% endif %}">
+                                    <td class="ps-4 align-middle">
+                                        <span class="rank-number">#{{ forloop.counter }}</span>
+                                    </td>
+                                    <td class="align-middle">
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ entry.user.profil.img.url|default:'/static/default_user.png' }}" class="table-avatar me-2">
+                                            <span class="username-text">{{ entry.user.username }}</span>
+                                            {% if entry.user == request.user %}
+                                                <span class="badge ms-2 bg-cyan-glow">YOU</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-muted small uppercase">
+                                        {{ entry.user.profil.country|default:"N/A" }}
+                                    </td>
+                                    <td class="text-center align-middle font-mono text-success">
+                                        {{ entry.solved_count }}
+                                    </td>
+                                    <td class="text-center align-middle font-mono text-danger">
+                                        -{{ entry.penalty }}
+                                    </td>
+                                    <td class="text-end pe-4 align-middle">
+                                        <span class="final-pts fw-bold text-cyan">{{ entry.total_score }}</span>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-5 text-muted">No data available in the matrix.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Share+Tech+Mono&display=swap');
+
+    .font-mono { font-family: 'Share Tech Mono', monospace; }
+    .font-cinzel { font-family: 'Cinzel', serif; }
+    .text-cyan { color: #66fcf1; }
+
+    /* Podium Styles */
+    .podium-card {
+        background: rgba(31, 40, 51, 0.6);
+        border: 1px solid #30363d;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        position: relative;
+        transition: 0.3s;
+    }
+    .rank-1 { height: 240px; border-color: #d4af37; box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); z-index: 3; }
+    .rank-2 { height: 210px; border-color: #c0c0c0; }
+    .rank-3 { height: 190px; border-color: #cd7f32; }
+
+    .podium-img {
+        width: 80px; height: 80px;
+        border-radius: 50%;
+        border: 3px solid #1f2833;
+        position: relative;
+        z-index: 2;
+    }
+    .rank-1 .podium-img { border-color: #d4af37; width: 100px; height: 100px; }
+
+    .rank-label {
+        position: absolute;
+        top: -15px; left: 50%;
+        transform: translateX(-50%);
+        background: #0b0c10;
+        padding: 0 15px;
+        font-size: 1.5rem;
+        color: #fff;
+    }
+
+    /* Table Styles */
+    .table-terminal-container {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .terminal-header { background: #0d1117; border-bottom: 1px solid #30363d; }
+    .terminal-title { color: #45a29e; font-family: 'Share Tech Mono'; font-size: 0.8rem; }
+    .terminal-dots span {
+        height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-left: 5px;
+    }
+    .terminal-dots span:nth-child(1) { background: #ff5f56; }
+    .terminal-dots span:nth-child(2) { background: #ffbd2e; }
+    .terminal-dots span:nth-child(3) { background: #27c93f; }
+
+    .custom-sb-table { border-collapse: separate; border-spacing: 0; }
+    .custom-sb-table thead th {
+        background: #0d1117; color: #45a29e; font-size: 0.8rem; letter-spacing: 1px; border: none; padding: 15px 10px;
+    }
+    .custom-sb-table tbody tr { border-bottom: 1px solid #21262d; transition: 0.2s; }
+    .custom-sb-table tbody tr:hover { background: rgba(102, 252, 241, 0.03); }
+
+    .current-user-row { background: rgba(102, 252, 241, 0.08) !important; }
+    .bg-cyan-glow { background: #66fcf1; color: #0b0c10; box-shadow: 0 0 10px #66fcf1; font-size: 0.6rem; }
+
+    .table-avatar { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #45a29e; }
+    .rank-number { color: #8b949e; font-family: 'Share Tech Mono'; }
+    .final-pts { font-size: 1.1rem; text-shadow: 0 0 10px rgba(102, 252, 241, 0.3); }
+</style>
+{% endblock %}
