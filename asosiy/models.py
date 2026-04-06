@@ -78,3 +78,33 @@ class BloklanganChallenge(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.challenge.nomi}"
+
+
+
+class Contest(models.Model):
+    FORMAT_CHOICES = [
+        ('jeopardy', 'Jeopardy'),
+        ('attack-defense', 'Attack-Defense'),
+    ]
+    TYPE_CHOICES = [
+        ('public', 'Public'),
+        ('private', 'Private'),
+    ]
+    PARTICIPATION_CHOICES = [
+        ('single', 'Single Player'),
+        ('team', 'Team'),
+    ]
+
+    nomi = models.CharField(max_length=200)
+    formati = models.CharField(max_length=50, choices=FORMAT_CHOICES, default='jeopardy')
+    tipi = models.CharField(max_length=20, choices=TYPE_CHOICES, default='public')
+    qatnashish = models.CharField(max_length=50, choices=PARTICIPATION_CHOICES, default='single')
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+
+    def __str__(self):
+        return self.nomi
+
+    class Meta:
+        verbose_name = "Contest"
+        verbose_name_plural = "Contests"

@@ -62,3 +62,10 @@ class UrinishAdmin(admin.ModelAdmin):
     is_correct_display.boolean = True
 
 admin.site.register(Urinish, UrinishAdmin)
+
+
+@admin.register(Contest)
+class ContestAdmin(admin.ModelAdmin):
+    list_display = ('nomi', 'formati', 'tipi', 'start_date', 'end_date')
+    list_filter = ('tipi', 'formati')
+    search_fields = ('nomi',)

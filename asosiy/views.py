@@ -7,6 +7,10 @@ from django.contrib import messages
 
 MAX_URINISH = 3
 
+def contest_list(request):
+    contests = Contest.objects.all().order_by('-start_date')
+    return render(request, 'contests/contest_list.html', {'contests': contests})
+
 
 def asosiy_sahifa(request):
     return render(request, 'asosiy/asosiy_sahifa.html')

@@ -1,0 +1,144 @@
+{% extends 'asosiy/asosiy_sahifa.html' %}
+{% load static %}
+
+{% block content %}
+<div class="arcana-users-wrapper py-5">
+    <div class="container">
+
+        <!-- Header -->
+        <div class="arcana-header text-center mb-5">
+            <div class="arcana-label">THE RITUALS</div>
+            <h1 class="arcana-title">ACTIVE CONTESTS</h1>
+            <div class="arcana-divider-center"></div>
+        </div>
+
+        <!-- Search Bar Mockup -->
+        <div class="row mb-4">
+            <div class="col-md-8 mx-auto">
+                <div class="arcana-search-box d-flex gap-2">
+                    <input type="text" class="form-control arc-input" placeholder="Search rituals by name...">
+                    <button class="btn arc-btn-gold px-4"><i class="bi bi-search"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contest Table -->
+        <div class="arcana-panel">
+            <div class="panel-inner">
+                <div class="table-responsive">
+                    <table class="table table-dark table-borderless arcana-table">
+                        <thead>
+                            <tr>
+                                <th><i class="bi bi-trophy-fill me-2"></i>CONTEST</th>
+                                <th><i class="bi bi-box-seam me-2"></i>FORMAT</th>
+                                <th><i class="bi bi-shield-shaded me-2"></i>TYPE</th>
+                                <th><i class="bi bi-people-fill me-2"></i>PARTICIPATION</th>
+                                <th><i class="bi bi-calendar-event me-2"></i>START DATE</th>
+                                <th><i class="bi bi-calendar-check me-2"></i>END DATE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for contest in contests %}
+                            <tr>
+                                <td><span class="contest-name">{{ contest.nomi|upper }}</span></td>
+                                <td><span class="text-muted">{{ contest.get_formati_display }}</span></td>
+                                <td>
+                                    {% if contest.tipi == 'public' %}
+                                        <span class="badge-arc-green"><i class="bi bi-unlock-fill me-1"></i> PUBLIC</span>
+                                    {% else %}
+                                        <span class="badge-arc-red"><i class="bi bi-lock-fill me-1"></i> PRIVATE</span>
+                                    {% endif %}
+                                </td>
+                                <td><span class="badge-arc-blue">{{ contest.get_qatnashish_display }}</span></td>
+                                <td class="date-text">{{ contest.start_date|date:"F d, Y, H:i" }}</td>
+                                <td class="date-text">{{ contest.end_date|date:"F d, Y, H:i" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5 opacity-50">NO RITUALS SCHEDULED YET...</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Arcana Specific Styles */
+.contest-name {
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.date-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    color: #aaa;
+}
+
+/* Badges */
+.badge-arc-green {
+    background: rgba(46, 204, 113, 0.1);
+    color: #2ecc71;
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+}
+
+.badge-arc-red {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+}
+
+.badge-arc-blue {
+    background: rgba(52, 152, 219, 0.1);
+    color: #3498db;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+}
+
+/* Input & Button */
+.arc-input {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    color: #fff;
+}
+.arc-input:focus {
+    background: rgba(0,0,0,0.5);
+    border-color: #d4af37;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+}
+
+.arc-btn-gold {
+    background: #d4af37;
+    color: #000;
+    font-weight: 700;
+    transition: 0.3s;
+}
+.arc-btn-gold:hover {
+    background: #fff;
+    box-shadow: 0 0 15px #d4af37;
+}
+
+/* Inherit panel styles from your existing CSS */
+.arcana-panel {
+    background: rgba(10, 10, 10, 0.5);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 15px;
+    padding: 12px;
+    backdrop-filter: blur(10px);
+}
+</style>
+{% endblock %}
