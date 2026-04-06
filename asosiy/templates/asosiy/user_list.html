@@ -31,7 +31,8 @@
                             {% for user in users %}
                             <tr>
                                 <td class="text-center">
-                                    <span class="id-tag">#{{ user.id }}</span>
+                                    <!-- user.id o'rniga forloop.counter ishlatildi -->
+                                    <span class="id-tag">#{{ forloop.counter }}</span>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center gap-3">
@@ -44,7 +45,7 @@
                                             <div class="frame-glint"></div>
                                         </div>
                                         <div class="username-wrap">
-                                            <span class="username">{{ user.username }}</span>
+                                            <span class="username">{{ user.username|upper }}</span>
                                         </div>
                                     </div>
                                 </td>
@@ -160,8 +161,9 @@
 /* ID and Text elements */
 .id-tag {
     font-size: 0.8rem;
-    color: #555;
+    color: #d4af37; /* ID rangi oltin rangga yaqinlashtirildi */
     font-weight: bold;
+    opacity: 0.8;
 }
 .email-text {
     font-family: 'Playfair Display', serif;
@@ -211,7 +213,6 @@
     font-size: 1.05rem;
     color: #fff;
     letter-spacing: 1px;
-    text-transform: none; 
 }
 
 .empty-message {
@@ -220,7 +221,6 @@
     letter-spacing: 3px;
 }
 
-/* Responsiveness */
 @media (max-width: 768px) {
     .arcana-title { font-size: 2rem; }
     .email-text, .country-tag { font-size: 0.75rem; }
