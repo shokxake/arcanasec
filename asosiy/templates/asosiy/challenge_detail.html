@@ -69,7 +69,7 @@
                     </div>
 
                     <div class="panel-body">
-                        <!-- Challenge Description: Left Aligned and Custom Font -->
+                        <!-- Challenge Description -->
                         <div class="description-container mb-4">
                             <p class="description-text">{{ challenge.tavsif|linebreaksbr }}</p>
                         </div>
@@ -122,12 +122,13 @@
                             <tbody>
                                 {% for solver in first_solvers_data %}
                                 <tr>
-                                    <td>{{ solver.id }}</td>
+                                    <td>{{ forloop.counter }}</td>
                                     <td class="d-flex align-items-center gap-2">
-                                        <img src="{{ arcana.img }}" class="solver-img" alt="avatar">
+                                        <!-- Rasm qismi to'g'irlandi -->
+                                        <img src="{% if solver.profil.img %}{{ solver.profil.img.url }}{% else %}{% static 'images/arcana.jpg' %}{% endif %}" class="solver-img" alt="avatar">
                                         <span>{{ solver.username }}</span>
                                     </td>
-                                    <td>{{ solver.country|default:"-" }}</td>
+                                    <td>{{ solver.profil.davlat|default:"Unknown" }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -141,17 +142,16 @@
 </div>
 
 <style>
+    /* Google Fonts ulanishi */
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
 
-    /* Wrapper background olib tashlandi, body foni ko'rinishi uchun */
     .arcana-detail-wrapper {
         min-height: 100vh;
         font-family: 'Cinzel', serif;
         color: #e0e0e0;
-        background: transparent; /* Fon olib tashlandi */
+        background: transparent;
     }
 
-    /* Back Link */
     .arcana-back-link {
         color: #d4af37;
         text-decoration: none;
@@ -166,14 +166,13 @@
         color: #d4af37;
     }
 
-    /* Left Card: Ichki qismlar kontrast uchun saqlab qolindi */
     .arcana-main-card {
-        background: rgba(15, 15, 15, 0.4); /* Juda shaffof fon */
+        background: rgba(15, 15, 15, 0.4);
         border: 1px solid rgba(212, 175, 55, 0.1);
         border-radius: 12px;
         padding: 15px;
         position: sticky;
-        top: 100px; /* Navbar balandligini hisobga olgan holda */
+        top: 100px;
     }
 
     .arcana-inner {
@@ -235,9 +234,8 @@
     .stat-item .value { font-size: 0.9rem; font-weight: 700; }
     .stat-divider { width: 1px; height: 30px; background: rgba(212, 175, 55, 0.2); }
 
-    /* Right Panel: Shafofroq qilindi */
     .arcana-details-panel {
-        background: rgba(20, 20, 20, 0.3); /* Kamroq qora */
+        background: rgba(20, 20, 20, 0.3);
         border: 1px solid rgba(212, 175, 55, 0.1);
         padding: 30px;
         border-radius: 12px;
@@ -246,18 +244,13 @@
     .panel-title { color: #d4af37; letter-spacing: 3px; font-size: 1.1rem; text-align: left; }
     .arcana-divider-sm { width: 40px; height: 2px; background: #d4af37; margin: 10px 0; }
 
-    /* Description Styling: Left Aligned and serif font */
-    .description-container {
-        text-align: left;
-        padding: 10px 0;
-    }
+    .description-container { text-align: left; padding: 10px 0; }
     .description-text {
         font-family: 'Playfair Display', serif;
         line-height: 1.7;
         font-size: 1.1rem;
         color: #dfdfdf;
         font-weight: 400;
-        letter-spacing: 0.3px;
     }
 
     .arcana-download-btn {
@@ -270,12 +263,8 @@
         letter-spacing: 2px;
         transition: 0.3s;
     }
-    .arcana-download-btn:hover {
-        background: #d4af37;
-        color: #000;
-    }
+    .arcana-download-btn:hover { background: #d4af37; color: #000; }
 
-    /* Input Group */
     .arcana-input-group {
         display: flex;
         border: 1px solid #2c2c2c;
@@ -288,30 +277,20 @@
         border-color: #d4af37;
         box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
     }
-    .arcana-input-group.blocked { opacity: 0.5; border-color: #444; }
-    
     .arcana-input-group input {
         background: transparent;
         border: none;
         color: #fff;
         font-family: 'Cinzel', serif;
         font-size: 0.85rem;
-        letter-spacing: 1px;
     }
-    .arcana-input-group input:focus { background: transparent; color: #fff; box-shadow: none; }
-
     .arcana-input-group .btn {
         background: #d4af37;
         color: #000;
         font-weight: 700;
-        font-size: 0.75rem;
         padding: 8px 20px;
-        border-radius: 2px;
     }
 
-    .attempts-count, .author-tag { font-size: 0.65rem; color: #666; letter-spacing: 1px; }
-
-    /* Solvers Table: Fon shaffofroq */
     .arcana-solvers-panel {
         background: rgba(15, 15, 15, 0.4);
         border: 1px solid rgba(212, 175, 55, 0.1);
@@ -320,11 +299,11 @@
     }
     .solvers-title { font-size: 0.8rem; letter-spacing: 2px; color: #d4af37; text-align: left; }
     .arcana-mini-table { font-size: 0.8rem; background: transparent !important; }
-    .arcana-mini-table th { color: #555; font-weight: 400; border: none; }
-    .arcana-mini-table td { vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; }
     
+    /* Solver Rasm CSS */
     .solver-img {
-        width: 24px; height: 24px;
+        width: 30px; 
+        height: 30px;
         border-radius: 50%;
         border: 1px solid #d4af37;
         object-fit: cover;
