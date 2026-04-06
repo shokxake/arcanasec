@@ -18,5 +18,6 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('logout/', auth_views.LogoutView.as_view(next_page='asosiy_sahifa'), name='logout'),
-    path('users/', views.users_list, name='users_list'),  # Bu qatorni o'zgartiring
+    path('users/', views.users_list, name='users_list'),
+    path('contests/', views.contest_list, name='contest_list')  # Bu qatorni o'zgartiring
 ]
