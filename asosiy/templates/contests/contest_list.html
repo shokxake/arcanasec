@@ -2,148 +2,526 @@
 {% load static %}
 
 {% block content %}
-<div class="arcana-users-wrapper py-5" style="background: #050505; min-height: 100vh;">
-    <div class="container">
+<div class="arcanasec-page">
+    <div class="arcana-bg-layer"></div>
+    <div class="arcana-noise-layer"></div>
+
+    <div class="container py-5 position-relative">
 
         <!-- Header -->
-        <div class="arcana-header text-center mb-5">
-            <div class="arcana-label" style="letter-spacing: 5px; color: #d4af37; font-size: 0.8rem;">THE RITUALS</div>
-            <h1 class="arcana-title text-white display-4 fw-bold" style="text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);">ACTIVE CONTESTS</h1>
-            <div class="arcana-divider-center mx-auto mt-3" style="width: 100px; height: 2px; background: linear-gradient(90deg, transparent, #d4af37, transparent);"></div>
+        <div class="arcana-hero text-center mb-5">
+            <p class="arcana-overline mb-2">THE CONGREGATION OF CHALLENGERS</p>
+            <h1 class="arcana-main-title mb-3">ACTIVE CONTESTS</h1>
+            <div class="arcana-line mx-auto mb-3"></div>
+            <p class="arcana-subtitle mx-auto">
+                Step into the circle. Choose your ritual, prove your worth, and ascend the ranks of ArcanaSec.
+            </p>
         </div>
 
-        <!-- Search Bar -->
-        <div class="row mb-5">
-            <div class="col-md-8 mx-auto">
-                <form method="GET" action="" class="arcana-search-box d-flex gap-2 p-1" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px;">
-                    <input type="text" name="search" class="form-control arc-input border-0 shadow-none" placeholder="Search rituals by name..." style="background: transparent; color: white;">
-                    <button type="submit" class="btn arc-btn-gold px-4">
-                        <i class="bi bi-search text-dark"></i>
-                    </button>
+        <!-- Search -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8">
+                <form method="GET" action="" class="arcana-search-wrap">
+                    <div class="arcana-search-inner">
+                        <i class="bi bi-search arcana-search-icon"></i>
+                        <input
+                            type="text"
+                            name="search"
+                            value="{{ request.GET.search }}"
+                            class="arcana-search-input"
+                            placeholder="Search contest, ritual, format..."
+                        >
+                        <button type="submit" class="arcana-search-btn">
+                            INVOKE
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
 
-        <!-- Contest Table Panel -->
-        <div class="arcana-panel shadow-lg">
-            <div class="panel-inner p-4">
-                <div class="table-responsive">
-                    <table class="table table-dark table-borderless arcana-table align-middle">
-                        <thead>
-                            <tr class="text-uppercase" style="border-bottom: 1px solid rgba(212, 175, 55, 0.2); font-size: 0.85rem; color: #d4af37;">
-                                <th class="pb-3"><i class="bi bi-trophy me-2"></i>CONTEST</th>
-                                <th class="pb-3 text-center"><i class="bi bi-box-seam me-2"></i>FORMAT</th>
-                                <th class="pb-3 text-center"><i class="bi bi-shield-shaded me-2"></i>TYPE</th>
-                                <th class="pb-3 text-center"><i class="bi bi-people me-2"></i>PARTICIPATION</th>
-                                <th class="pb-3 text-center"><i class="bi bi-calendar-event me-2"></i>START DATE</th>
-                                <th class="pb-3 text-center"><i class="bi bi-calendar-check me-2"></i>END DATE</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for contest in contests %}
-                            <tr class="contest-row">
-                                <td class="py-4">
-                                    <!-- MANA BU YERDA LINK QO'SHILDI -->
-                                    <a href="{% url 'contest_detail' contest.id %}" class="contest-link-wrapper text-decoration-none">
-                                        <span class="contest-name">{{ contest.nomi|upper }}</span>
-                                    </a>
-                                </td>
-                                <td class="text-center"><span class="text-muted small">{{ contest.get_formati_display }}</span></td>
-                                <td class="text-center">
-                                    {% if contest.tipi == 'public' %}
-                                        <span class="badge-arc-green"><i class="bi bi-unlock-fill me-1"></i> PUBLIC</span>
-                                    {% else %}
-                                        <span class="badge-arc-red"><i class="bi bi-lock-fill me-1"></i> PRIVATE</span>
-                                    {% endif %}
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge-arc-blue">{{ contest.get_qatnashish_display }}</span>
-                                </td>
-                                <td class="text-center date-text">{{ contest.start_date|date:"M d, Y, H:i" }}</td>
-                                <td class="text-center date-text">{{ contest.end_date|date:"M d, Y, H:i" }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="6" class="text-center py-5 opacity-50 font-monospace">NO RITUALS SCHEDULED YET...</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+        <!-- Table Panel -->
+        <div class="arcana-panel">
+            <div class="arcana-panel-top">
+                <div class="arcana-panel-title">
+                    <span class="arcana-panel-dot"></span>
+                    RITUAL DIRECTORY
                 </div>
+                <div class="arcana-panel-side-text">ARCANASEC</div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table arcana-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>CONTEST</th>
+                            <th class="text-center">FORMAT</th>
+                            <th class="text-center">TYPE</th>
+                            <th class="text-center">PARTICIPATION</th>
+                            <th class="text-center">START DATE</th>
+                            <th class="text-center">END DATE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contest in contests %}
+                        <tr class="arcana-row">
+                            <td>
+                                <a href="{% url 'contest_detail' contest.id %}" class="arcana-contest-link">
+                                    <span class="arcana-contest-glow"></span>
+                                    <span class="arcana-contest-name">{{ contest.nomi|upper }}</span>
+                                </a>
+                            </td>
+
+                            <td class="text-center">
+                                <span class="arcana-muted-text">{{ contest.get_formati_display }}</span>
+                            </td>
+
+                            <td class="text-center">
+                                {% if contest.tipi == 'public' %}
+                                    <span class="arcana-badge arcana-badge-public">
+                                        <i class="bi bi-unlock-fill me-1"></i> PUBLIC
+                                    </span>
+                                {% else %}
+                                    <span class="arcana-badge arcana-badge-private">
+                                        <i class="bi bi-lock-fill me-1"></i> PRIVATE
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center">
+                                <span class="arcana-badge arcana-badge-participation">
+                                    {{ contest.get_qatnashish_display }}
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                <span class="arcana-date">{{ contest.start_date|date:"M d, Y, H:i" }}</span>
+                            </td>
+
+                            <td class="text-center">
+                                <span class="arcana-date">{{ contest.end_date|date:"M d, Y, H:i" }}</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <div class="arcana-empty-state">
+                                    <div class="arcana-empty-icon mb-3">
+                                        <i class="bi bi-moon-stars"></i>
+                                    </div>
+                                    <div class="arcana-empty-title">NO RITUALS SCHEDULED</div>
+                                    <div class="arcana-empty-text">The circle is silent... for now.</div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
+
     </div>
 </div>
 
 <style>
-/* Link va Hover Effektlari */
-.contest-link-wrapper {
-    display: inline-block;
-    cursor: pointer;
-}
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&family=Share+Tech+Mono&display=swap');
 
-.contest-name {
-    color: #ffffff;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-    position: relative;
-}
+    :root {
+        --arc-bg: #060606;
+        --arc-bg-soft: #0d0d0f;
+        --arc-card: rgba(10, 10, 12, 0.92);
+        --arc-gold: #d4af37;
+        --arc-gold-soft: rgba(212, 175, 55, 0.18);
+        --arc-gold-strong: rgba(212, 175, 55, 0.35);
+        --arc-text: #f3efe3;
+        --arc-muted: #a49a84;
+        --arc-line: rgba(212, 175, 55, 0.18);
+        --arc-red: #b84b4b;
+        --arc-green: #58b67a;
+        --arc-blue: #628de0;
+    }
 
-.contest-row:hover .contest-name {
-    color: #d4af37;
-    text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
-    padding-left: 5px;
-}
+    .arcanasec-page {
+        position: relative;
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at top center, rgba(212, 175, 55, 0.08), transparent 28%),
+            radial-gradient(circle at 20% 20%, rgba(85, 60, 20, 0.12), transparent 20%),
+            linear-gradient(180deg, #030303 0%, #070707 50%, #050505 100%);
+        overflow: hidden;
+    }
 
-.contest-row {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    transition: background 0.3s;
-}
+    .arcana-bg-layer {
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+        background-size: 80px 80px;
+        opacity: 0.14;
+        pointer-events: none;
+    }
 
-.contest-row:hover {
-    background: rgba(212, 175, 55, 0.02);
-}
+    .arcana-noise-layer {
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 60%);
+        mix-blend-mode: screen;
+        opacity: 0.25;
+        pointer-events: none;
+    }
 
-.date-text {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.85rem;
-    color: #888;
-}
+    .arcana-hero {
+        position: relative;
+        z-index: 2;
+    }
 
-/* Badges Customization */
-.badge-arc-green, .badge-arc-red, .badge-arc-blue {
-    padding: 5px 12px;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: bold;
-    display: inline-block;
-    letter-spacing: 1px;
-}
+    .arcana-overline {
+        font-family: 'Inter', sans-serif;
+        letter-spacing: 0.45rem;
+        text-transform: uppercase;
+        color: var(--arc-gold);
+        font-size: 0.76rem;
+        opacity: 0.92;
+    }
 
-.badge-arc-green { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
-.badge-arc-red { background: rgba(231, 76, 60, 0.1); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
-.badge-arc-blue { background: rgba(52, 152, 219, 0.1); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.3); }
+    .arcana-main-title {
+        font-family: 'Cinzel', serif;
+        color: var(--arc-text);
+        font-size: clamp(2.4rem, 5vw, 4.5rem);
+        font-weight: 700;
+        letter-spacing: 0.12rem;
+        text-transform: uppercase;
+        text-shadow:
+            0 0 12px rgba(212, 175, 55, 0.18),
+            0 0 30px rgba(212, 175, 55, 0.08);
+    }
 
-/* Input & Button */
-.arc-btn-gold {
-    background: #d4af37;
-    border: none;
-    font-weight: 700;
-    transition: 0.3s;
-}
-.arc-btn-gold:hover {
-    background: #fff;
-    box-shadow: 0 0 15px #d4af37;
-    transform: scale(1.05);
-}
+    .arcana-line {
+        width: 180px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--arc-gold), transparent);
+        box-shadow: 0 0 16px rgba(212, 175, 55, 0.22);
+    }
 
-.arcana-panel {
-    background: rgba(15, 15, 15, 0.8);
-    border: 1px solid rgba(212, 175, 55, 0.15);
-    border-radius: 12px;
-    backdrop-filter: blur(15px);
-}
+    .arcana-subtitle {
+        max-width: 760px;
+        color: var(--arc-muted);
+        font-family: 'Inter', sans-serif;
+        font-size: 0.98rem;
+        line-height: 1.8;
+    }
+
+    .arcana-search-wrap {
+        position: relative;
+        z-index: 2;
+    }
+
+    .arcana-search-inner {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border: 1px solid var(--arc-line);
+        background: linear-gradient(180deg, rgba(16,16,18,0.94), rgba(8,8,10,0.96));
+        border-radius: 18px;
+        box-shadow:
+            inset 0 0 0 1px rgba(255,255,255,0.02),
+            0 10px 35px rgba(0,0,0,0.35),
+            0 0 25px rgba(212,175,55,0.04);
+        backdrop-filter: blur(10px);
+    }
+
+    .arcana-search-icon {
+        color: var(--arc-gold);
+        font-size: 1rem;
+        padding-left: 10px;
+    }
+
+    .arcana-search-input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        outline: none;
+        color: var(--arc-text);
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        padding: 10px 4px;
+    }
+
+    .arcana-search-input::placeholder {
+        color: #7f7664;
+    }
+
+    .arcana-search-btn {
+        border: 1px solid rgba(212, 175, 55, 0.35);
+        background: linear-gradient(180deg, #d4af37 0%, #b8911f 100%);
+        color: #111;
+        font-family: 'Cinzel', serif;
+        font-weight: 700;
+        letter-spacing: 0.08rem;
+        padding: 11px 22px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 18px rgba(212, 175, 55, 0.15);
+    }
+
+    .arcana-search-btn:hover {
+        transform: translateY(-1px);
+        box-shadow:
+            0 0 20px rgba(212, 175, 55, 0.28),
+            0 8px 22px rgba(0,0,0,0.22);
+        color: #000;
+    }
+
+    .arcana-panel {
+        position: relative;
+        z-index: 2;
+        border: 1px solid var(--arc-line);
+        border-radius: 24px;
+        overflow: hidden;
+        background:
+            linear-gradient(180deg, rgba(13,13,15,0.98), rgba(7,7,8,0.98));
+        box-shadow:
+            0 20px 60px rgba(0,0,0,0.5),
+            0 0 35px rgba(212,175,55,0.05),
+            inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    .arcana-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 24px;
+        padding: 1px;
+        background: linear-gradient(
+            135deg,
+            rgba(212,175,55,0.22),
+            rgba(255,255,255,0.02),
+            rgba(212,175,55,0.14)
+        );
+        -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .arcana-panel-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--arc-line);
+        background: linear-gradient(180deg, rgba(212,175,55,0.04), rgba(255,255,255,0));
+    }
+
+    .arcana-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--arc-gold);
+        font-family: 'Cinzel', serif;
+        font-weight: 600;
+        letter-spacing: 0.1rem;
+        font-size: 0.95rem;
+    }
+
+    .arcana-panel-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--arc-gold);
+        box-shadow: 0 0 14px rgba(212, 175, 55, 0.5);
+    }
+
+    .arcana-panel-side-text {
+        color: rgba(212, 175, 55, 0.45);
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.8rem;
+        letter-spacing: 0.15rem;
+    }
+
+    .arcana-table {
+        --bs-table-bg: transparent;
+        --bs-table-color: transparent;
+        margin-bottom: 0;
+    }
+
+    .arcana-table thead th {
+        color: var(--arc-gold);
+        font-family: 'Cinzel', serif;
+        font-weight: 600;
+        font-size: 0.82rem;
+        letter-spacing: 0.12rem;
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.16);
+        padding: 18px 20px;
+        white-space: nowrap;
+        background: rgba(255,255,255,0.01);
+    }
+
+    .arcana-row td {
+        padding: 22px 20px;
+        vertical-align: middle;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+        background: transparent;
+        transition: all 0.3s ease;
+    }
+
+    .arcana-row:hover td {
+        background:
+            linear-gradient(90deg, rgba(212,175,55,0.045), rgba(255,255,255,0.01));
+    }
+
+    .arcana-contest-link {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+    }
+
+    .arcana-contest-glow {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--arc-gold);
+        box-shadow: 0 0 16px rgba(212, 175, 55, 0.45);
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+    }
+
+    .arcana-contest-name {
+        color: var(--arc-text);
+        font-family: 'Cinzel', serif;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.08rem;
+        transition: all 0.3s ease;
+    }
+
+    .arcana-row:hover .arcana-contest-glow {
+        transform: scale(1.3);
+        box-shadow: 0 0 24px rgba(212, 175, 55, 0.7);
+    }
+
+    .arcana-row:hover .arcana-contest-name {
+        color: var(--arc-gold);
+        text-shadow: 0 0 15px rgba(212, 175, 55, 0.35);
+    }
+
+    .arcana-muted-text {
+        color: #c7bea9;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.92rem;
+    }
+
+    .arcana-date {
+        color: #8f8776;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.84rem;
+        white-space: nowrap;
+    }
+
+    .arcana-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 13px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08rem;
+        text-transform: uppercase;
+        border: 1px solid transparent;
+        min-width: 96px;
+    }
+
+    .arcana-badge-public {
+        color: #7ef0a5;
+        background: rgba(55, 115, 77, 0.14);
+        border-color: rgba(126, 240, 165, 0.18);
+        box-shadow: inset 0 0 14px rgba(126, 240, 165, 0.03);
+    }
+
+    .arcana-badge-private {
+        color: #ff8c8c;
+        background: rgba(127, 42, 42, 0.14);
+        border-color: rgba(255, 140, 140, 0.18);
+        box-shadow: inset 0 0 14px rgba(255, 140, 140, 0.03);
+    }
+
+    .arcana-badge-participation {
+        color: #8fb5ff;
+        background: rgba(54, 76, 132, 0.16);
+        border-color: rgba(143, 181, 255, 0.18);
+        box-shadow: inset 0 0 14px rgba(143, 181, 255, 0.03);
+    }
+
+    .arcana-empty-state {
+        padding: 30px 10px;
+    }
+
+    .arcana-empty-icon {
+        font-size: 2rem;
+        color: rgba(212, 175, 55, 0.7);
+        text-shadow: 0 0 16px rgba(212, 175, 55, 0.28);
+    }
+
+    .arcana-empty-title {
+        color: var(--arc-text);
+        font-family: 'Cinzel', serif;
+        font-size: 1.1rem;
+        letter-spacing: 0.08rem;
+        margin-bottom: 6px;
+    }
+
+    .arcana-empty-text {
+        color: var(--arc-muted);
+        font-family: 'Inter', sans-serif;
+        font-size: 0.92rem;
+    }
+
+    @media (max-width: 991px) {
+        .arcana-main-title {
+            font-size: 2.2rem;
+        }
+
+        .arcana-search-inner {
+            flex-wrap: wrap;
+        }
+
+        .arcana-search-btn {
+            width: 100%;
+        }
+
+        .arcana-table thead th,
+        .arcana-row td {
+            padding: 16px 14px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .arcana-overline {
+            letter-spacing: 0.24rem;
+            font-size: 0.7rem;
+        }
+
+        .arcana-subtitle {
+            font-size: 0.9rem;
+        }
+
+        .arcana-panel-top {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .arcana-contest-name {
+            font-size: 0.92rem;
+        }
+    }
 </style>
 {% endblock %}
