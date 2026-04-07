@@ -2,146 +2,421 @@
 {% load static %}
 
 {% block content %}
-<!-- Musobaqa Navbari -->
-{% include 'includes/contest_navbar.html' %}
+<div class="arcana-participants-page">
+    <div class="arcana-bg-layer"></div>
+    <div class="arcana-noise-layer"></div>
 
-<div class="contest-participants-wrapper pb-5" style="background-color: #0b0c10; min-height: 100vh;">
-    <div class="container">
-        
-        <!-- Sahifa Sarlavhasi -->
-        <div class="row mb-5">
-            <div class="col-12 text-center">
-                <h2 class="text-white font-cinzel fw-bold mb-2" style="letter-spacing: 3px;">
-                    REGISTERED OPERATIVES
-                </h2>
-                <div class="h-line mx-auto"></div>
-                <p class="text-muted mt-3 font-mono small text-uppercase">
-                    Total active connections: <span class="text-cyan">{{ participants.count }}</span>
-                </p>
+    <div class="container py-5 position-relative">
+
+        <!-- HERO -->
+        <section class="arcana-participants-hero text-center">
+            <p class="arcana-overline mb-2">THE CONGREGATION</p>
+            <h1 class="arcana-page-title">{{ contest.nomi|upper }} — USERS</h1>
+            <div class="arcana-line mx-auto my-4"></div>
+            <p class="arcana-hero-subtitle mx-auto">
+                A gathering of seekers who have entered this ritual and stand ready before the unknown.
+            </p>
+        </section>
+
+        <!-- STATS -->
+        <section class="row justify-content-center mb-5">
+            <div class="col-xl-3 col-md-5 col-sm-8">
+                <div class="arcana-stat-card text-center">
+                    <div class="arcana-stat-label">TOTAL PARTICIPANTS</div>
+                    <div class="arcana-stat-value">{{ participants.count }}</div>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Ishtirokchilar Grid -->
-        <div class="row g-4">
-            {% for participant in participants %}
-                <div class="col-xl-3 col-lg-4 col-md-6">
-                    <div class="operative-card">
-                        <div class="card-glow"></div>
-                        <div class="p-3 position-relative">
-                            
-                            <!-- Profil Rasmi va Username -->
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="avatar-wrapper me-3">
-                                    {% if participant.user.profil.img %}
-                                        <img src="{{ participant.user.profil.img.url }}" alt="avatar" class="img-fluid rounded-circle border-cyan">
-                                    {% else %}
-                                        <img src="{% static 'default_user.png' %}" alt="default" class="img-fluid rounded-circle border-cyan">
-                                    {% endif %}
-                                    <div class="online-indicator"></div>
-                                </div>
-                                <div class="overflow-hidden">
-                                    <h6 class="text-white mb-0 text-truncate font-mono">{{ participant.user.username }}</h6>
-                                    <small class="text-cyan opacity-75 small">ID: #{{ participant.user.id|add:1000 }}</small>
-                                </div>
-                            </div>
-
-                            <!-- Ma'lumotlar -->
-                            <div class="operative-info font-mono small">
-                                <div class="d-flex justify-content-between border-bottom border-dark py-1">
-                                    <span class="text-muted">ORIGIN:</span>
-                                    <span class="text-white">{{ participant.user.profil.country|default:"Unknown"|upper }}</span>
-                                </div>
-                                <div class="d-flex justify-content-between border-bottom border-dark py-1">
-                                    <span class="text-muted">JOINED:</span>
-                                    <span class="text-white">{{ participant.joined_at|date:"d M, H:i" }}</span>
-                                </div>
-                                <div class="d-flex justify-content-between py-1">
-                                    <span class="text-muted">STATUS:</span>
-                                    <span class="text-success">AUTHORIZED</span>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
+        <!-- TABLE PANEL -->
+        <section class="arcana-panel">
+            <div class="arcana-panel-top">
+                <div class="arcana-panel-title">
+                    <span class="arcana-panel-dot"></span>
+                    REGISTERED OPERATIVES
                 </div>
-            {% empty %}
-                <div class="col-12 text-center py-5">
-                    <div class="alert alert-dark bg-dark-card border-secondary text-muted font-mono">
-                        <i class="bi bi-exclamation-triangle me-2"></i> No operatives have breached this ritual yet.
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
+                <div class="arcana-panel-side-text">ARCANASEC</div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table arcana-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 90px;">ID</th>
+                            <th>INITIATE</th>
+                            <th class="text-center">JOINED</th>
+                            <th class="text-end">ORIGIN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for participant in participants %}
+                        <tr>
+                            <td class="text-center">
+                                <span class="id-tag">#{{ forloop.counter }}</span>
+                            </td>
+
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="avatar-frame">
+                                        {% if participant.user.profil.img %}
+                                            <img src="{{ participant.user.profil.img.url }}" alt="{{ participant.user.username }}" class="user-img">
+                                        {% else %}
+                                            <img src="{% static 'images/arcana.jpg' %}" alt="Default" class="user-img">
+                                        {% endif %}
+                                        <div class="frame-glint"></div>
+                                        <div class="online-indicator"></div>
+                                    </div>
+
+                                    <div class="username-wrap">
+                                        <span class="username">{{ participant.user.username|upper }}</span>
+                                        <span class="user-sub-id">ID: #{{ participant.user.id|add:1000 }}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="text-center">
+                                <span class="joined-tag">{{ participant.joined_at|date:"d M Y, H:i" }}</span>
+                            </td>
+
+                            <td class="text-end">
+                                <span class="country-tag">
+                                    <i class="bi bi-geo-alt me-1"></i>
+                                    {{ participant.user.profil.country|default:"Unknown Realm" }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5">
+                                <div class="empty-message">NO OPERATIVES HAVE BREACHED THIS RITUAL YET...</div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
     </div>
 </div>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600&family=Share+Tech+Mono&display=swap');
 
-    .font-mono { font-family: 'Share Tech Mono', monospace; }
-    .text-cyan { color: #66fcf1; }
-    .bg-dark-card { background: #1f2833; }
-
-    .h-line {
-        height: 2px;
-        width: 100px;
-        background: linear-gradient(90deg, transparent, #66fcf1, transparent);
+    :root {
+        --arc-gold: #d4af37;
+        --arc-gold-soft: rgba(212, 175, 55, 0.14);
+        --arc-gold-strong: rgba(212, 175, 55, 0.28);
+        --arc-text: #f3efe3;
+        --arc-muted: #aa9f86;
+        --arc-line: rgba(212, 175, 55, 0.18);
+        --arc-bg: #050505;
     }
 
-    /* Operative Card Style */
-    .operative-card {
-        background: #161b22;
-        border: 1px solid #30363d;
-        border-radius: 4px;
+    .arcana-participants-page {
         position: relative;
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at top center, rgba(212, 175, 55, 0.08), transparent 28%),
+            radial-gradient(circle at 20% 20%, rgba(85, 60, 20, 0.10), transparent 20%),
+            linear-gradient(180deg, #030303 0%, #070707 50%, #050505 100%);
         overflow: hidden;
-        transition: all 0.3s ease;
     }
 
-    .operative-card:hover {
-        border-color: #66fcf1;
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    .arcana-bg-layer {
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+        background-size: 80px 80px;
+        opacity: 0.10;
+        pointer-events: none;
     }
 
-    /* Avatar & Status */
-    .avatar-wrapper {
+    .arcana-noise-layer {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 60%);
+        mix-blend-mode: screen;
+        opacity: 0.20;
+        pointer-events: none;
+    }
+
+    .arcana-participants-hero {
         position: relative;
-        width: 50px;
-        height: 50px;
+        z-index: 2;
+        padding: 10px 0 24px;
     }
-    .border-cyan { border: 2px solid #45a29e; padding: 2px; }
-    
+
+    .arcana-overline {
+        font-family: 'Inter', sans-serif;
+        letter-spacing: 0.42rem;
+        text-transform: uppercase;
+        color: var(--arc-gold);
+        font-size: 0.76rem;
+        opacity: 0.95;
+    }
+
+    .arcana-page-title {
+        font-family: 'Cinzel', serif;
+        color: var(--arc-text);
+        font-size: clamp(2rem, 4vw, 3.8rem);
+        font-weight: 700;
+        letter-spacing: 0.10rem;
+        text-transform: uppercase;
+        text-shadow:
+            0 0 12px rgba(212, 175, 55, 0.18),
+            0 0 30px rgba(212, 175, 55, 0.08);
+        margin-bottom: 0;
+    }
+
+    .arcana-line {
+        width: 180px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--arc-gold), transparent);
+        box-shadow: 0 0 16px rgba(212, 175, 55, 0.22);
+    }
+
+    .arcana-hero-subtitle {
+        max-width: 760px;
+        color: var(--arc-muted);
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        line-height: 1.8;
+    }
+
+    .arcana-stat-card {
+        border: 1px solid var(--arc-line);
+        border-radius: 20px;
+        background: rgba(255,255,255,0.02);
+        padding: 22px 18px;
+        box-shadow:
+            inset 0 0 14px rgba(212,175,55,0.02),
+            0 0 20px rgba(0,0,0,0.16);
+        backdrop-filter: blur(3px);
+    }
+
+    .arcana-stat-label {
+        color: var(--arc-gold);
+        font-family: 'Cinzel', serif;
+        font-size: 0.78rem;
+        letter-spacing: 0.14rem;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+    }
+
+    .arcana-stat-value {
+        color: var(--arc-text);
+        font-family: 'Cinzel', serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        text-shadow: 0 0 10px rgba(212, 175, 55, 0.08);
+    }
+
+    .arcana-panel {
+        position: relative;
+        z-index: 2;
+        border: 1px solid var(--arc-line);
+        border-radius: 26px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.02);
+        box-shadow:
+            0 10px 30px rgba(0,0,0,0.4),
+            0 0 28px rgba(212,175,55,0.04);
+        backdrop-filter: blur(3px);
+    }
+
+    .arcana-panel-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 22px 24px;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.14);
+        background: rgba(255,255,255,0.01);
+    }
+
+    .arcana-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--arc-gold);
+        font-family: 'Cinzel', serif;
+        font-weight: 600;
+        letter-spacing: 0.10rem;
+        font-size: 0.96rem;
+    }
+
+    .arcana-panel-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--arc-gold);
+        box-shadow: 0 0 14px rgba(212, 175, 55, 0.45);
+    }
+
+    .arcana-panel-side-text {
+        color: rgba(212, 175, 55, 0.45);
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.8rem;
+        letter-spacing: 0.15rem;
+    }
+
+    .arcana-table {
+        margin-bottom: 0;
+        background: transparent !important;
+        --bs-table-bg: transparent;
+    }
+
+    .arcana-table thead th {
+        background: rgba(20,20,20,0.45);
+        color: #d4af37;
+        font-family: 'Cinzel', serif;
+        font-size: 0.74rem;
+        letter-spacing: 0.12rem;
+        padding: 20px;
+        border: none;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .arcana-table tbody tr {
+        transition: 0.3s;
+        border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .arcana-table tbody tr:hover {
+        background: rgba(212, 175, 55, 0.05);
+    }
+
+    .arcana-table td {
+        padding: 18px 20px;
+        vertical-align: middle;
+        color: var(--arc-text);
+        background: transparent;
+    }
+
+    .id-tag {
+        font-size: 0.82rem;
+        color: #d4af37;
+        font-weight: 700;
+        font-family: 'Cinzel', serif;
+        opacity: 0.9;
+    }
+
+    .avatar-frame {
+        position: relative;
+        width: 52px;
+        height: 52px;
+        padding: 3px;
+        background: linear-gradient(135deg, #d4af37, transparent);
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .user-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #000;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .frame-glint {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
     .online-indicator {
         position: absolute;
-        bottom: 2px;
-        right: 2px;
+        bottom: 3px;
+        right: 3px;
         width: 12px;
         height: 12px;
-        background: #28a745;
-        border: 2px solid #161b22;
         border-radius: 50%;
-        box-shadow: 0 0 5px #28a745;
+        background: #28a745;
+        border: 2px solid #111;
+        box-shadow: 0 0 8px rgba(40, 167, 69, 0.8);
+        z-index: 3;
     }
 
-    /* Glow Effect on Hover */
-    .card-glow {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: radial-gradient(circle at 50% 0%, rgba(102, 252, 241, 0.1), transparent 70%);
-        opacity: 0;
-        transition: 0.3s;
+    .username-wrap {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.35;
+        min-width: 0;
     }
-    .operative-card:hover .card-glow { opacity: 1; }
 
-    /* Info Section */
-    .operative-info span { letter-spacing: 1px; }
-    .border-dark { border-color: #30363d !important; }
+    .username {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #fff;
+        letter-spacing: 1px;
+        font-family: 'Cinzel', serif;
+    }
 
-    /* Custom Scrollbar for the whole page */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #0b0c10; }
-    ::-webkit-scrollbar-thumb { background: #45a29e; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: #66fcf1; }
+    .user-sub-id {
+        font-size: 0.72rem;
+        color: var(--arc-gold);
+        font-family: 'Share Tech Mono', monospace;
+        opacity: 0.8;
+    }
+
+    .joined-tag {
+        color: #d8d0bf;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.84rem;
+    }
+
+    .country-tag {
+        font-size: 0.84rem;
+        color: #aaa;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .empty-message {
+        font-style: italic;
+        color: #666;
+        letter-spacing: 2px;
+        font-family: 'Cinzel', serif;
+    }
+
+    @media (max-width: 768px) {
+        .arcana-page-title {
+            font-size: 2.2rem;
+        }
+
+        .arcana-table thead th:nth-child(4),
+        .arcana-table tbody td:nth-child(4) {
+            display: none;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .arcana-overline {
+            letter-spacing: 0.24rem;
+            font-size: 0.7rem;
+        }
+
+        .arcana-hero-subtitle {
+            font-size: 0.92rem;
+        }
+
+        .arcana-panel-top {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .arcana-table thead th:nth-child(3),
+        .arcana-table tbody td:nth-child(3) {
+            display: none;
+        }
+    }
 </style>
 {% endblock %}
