@@ -198,7 +198,7 @@
 </head>
 <body>
 
-    {% if request.resolver_match.url_name == 'contest_detail' or request.resolver_match.url_name == 'contest_challenges' or request.resolver_match.url_name == 'contest_scoreboard' or request.resolver_match.url_name == 'contest_participants' %}
+    {% if request.resolver_match.url_name == 'contest_detail' or request.resolver_match.url_name == 'contest_challenges' or request.resolver_match.url_name == 'contest_challenge_detail' or request.resolver_match.url_name == 'contest_scoreboard' or request.resolver_match.url_name == 'contest_participants' %}
         {% include 'includes/contest_navbar.html' %}
     {% else %}
         <nav class="navbar navbar-expand-lg navbar-dark navbar-mystic sticky-top">
