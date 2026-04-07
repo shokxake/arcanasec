@@ -1,45 +1,34 @@
-<!-- Contest Navbar -->
-<nav class="contest-nav py-3 mb-4">
+<!-- ArcanaSec Contest Navbar -->
+<nav class="arcana-contest-nav">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-            
-            <!-- Chap tomon: Musobaqa nomi va Status -->
-            <div class="d-flex align-items-center">
-                <div class="contest-icon-box me-3">
-                    <i class="bi bi-terminal-fill text-cyan fs-4"></i>
-                </div>
-                <div>
-                    <h5 class="text-white mb-0 font-cinzel fw-bold" style="letter-spacing: 2px;">
-                        {{ contest.nomi|upper }}
-                    </h5>
-                    <small class="text-muted d-block" style="font-size: 0.7rem;">
-                        <span class="status-dot animate-flicker"></span> MISSION IN PROGRESS
-                    </small>
-                </div>
-            </div>
+        <div class="arcana-contest-nav-inner">
 
-            <!-- Markaz: Navigatsiya tugmalari -->
-            <div class="contest-menu-links d-flex gap-2">
-                <a href="{% url 'contest_challenges' contest.id %}" 
-                   class="nav-link-custom {% if request.resolver_match.url_name == 'contest_challenges' %}active{% endif %}">
-                    <i class="bi bi-grid-3x3-gap me-2"></i> CHALLENGES
+            <!-- Center Menu -->
+            <div class="arcana-contest-menu">
+                <a href="{% url 'contest_challenges' contest.id %}"
+                   class="arcana-nav-link {% if request.resolver_match.url_name == 'contest_challenges' %}active{% endif %}">
+                    <i class="bi bi-grid-3x3-gap me-2"></i>
+                    CHALLENGES
                 </a>
-                
-                <a href="{% url 'contest_scoreboard' contest.id %}" 
-                   class="nav-link-custom {% if request.resolver_match.url_name == 'contest_scoreboard' %}active{% endif %}">
-                    <i class="bi bi-trophy me-2"></i> SCOREBOARD
+
+                <a href="{% url 'contest_scoreboard' contest.id %}"
+                   class="arcana-nav-link {% if request.resolver_match.url_name == 'contest_scoreboard' %}active{% endif %}">
+                    <i class="bi bi-trophy me-2"></i>
+                    SCOREBOARD
                 </a>
-                
-                <a href="{% url 'contest_participants' contest.id %}" 
-                   class="nav-link-custom {% if request.resolver_match.url_name == 'contest_participants' %}active{% endif %}">
-                    <i class="bi bi-people me-2"></i> USERS
+
+                <a href="{% url 'contest_participants' contest.id %}"
+                   class="arcana-nav-link {% if request.resolver_match.url_name == 'contest_participants' %}active{% endif %}">
+                    <i class="bi bi-people me-2"></i>
+                    USERS
                 </a>
             </div>
 
-            <!-- O'ng tomon: Chiqish yoki Qaytish -->
-            <div class="d-flex align-items-center">
-                <a href="{% url 'contest_list' %}" class="btn-back-to-hq">
-                    <i class="bi bi-arrow-left-circle me-1"></i> BACK TO HQ
+            <!-- Right Side -->
+            <div class="arcana-contest-right">
+                <a href="{% url 'contest_list' %}" class="arcana-back-btn">
+                    <i class="bi bi-arrow-left-circle me-2"></i>
+                    BACK TO HQ
                 </a>
             </div>
         </div>
@@ -47,92 +36,181 @@
 </nav>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
 
-    .contest-nav {
-        background: #111418;
-        border-bottom: 1px solid #45a29e;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-        font-family: 'Share Tech Mono', monospace;
+    :root {
+        --arc-gold: #d4af37;
+        --arc-gold-soft: rgba(212, 175, 55, 0.14);
+        --arc-gold-strong: rgba(212, 175, 55, 0.28);
+        --arc-text: #f3efe3;
+        --arc-muted: #a99f8b;
+        --arc-line: rgba(212, 175, 55, 0.18);
+        --arc-bg: rgba(6, 6, 8, 0.82);
     }
 
-    .contest-icon-box {
-        background: rgba(102, 252, 241, 0.1);
-        border: 1px solid #66fcf1;
-        padding: 5px 12px;
-        border-radius: 5px;
+    .arcana-contest-nav {
+        position: relative;
+        z-index: 30;
+        padding: 18px 0;
+        background:
+            linear-gradient(180deg, rgba(8,8,10,0.95), rgba(6,6,8,0.88));
+        border-bottom: 1px solid var(--arc-line);
+        box-shadow:
+            0 8px 30px rgba(0, 0, 0, 0.35),
+            0 0 24px rgba(212, 175, 55, 0.04);
+        backdrop-filter: blur(10px);
     }
 
-    .text-cyan { color: #66fcf1; }
+    .arcana-contest-nav::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -1px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--arc-gold), transparent);
+        opacity: 0.7;
+    }
 
-    /* Navigatsiya linklari */
-    .nav-link-custom {
-        color: #c5c6c7;
+    .arcana-contest-nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        position: relative;
+        min-height: 54px;
+    }
+
+    .arcana-contest-menu {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .arcana-nav-link {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 22px;
+        border-radius: 999px;
         text-decoration: none;
-        padding: 8px 20px;
-        border-radius: 4px;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
+        font-family: 'Cinzel', serif;
+        font-size: 0.84rem;
+        font-weight: 600;
+        letter-spacing: 0.10rem;
+        text-transform: uppercase;
+        color: var(--arc-muted);
         border: 1px solid transparent;
-        letter-spacing: 1px;
+        background: rgba(255,255,255,0.015);
+        transition: all 0.3s ease;
     }
 
-    .nav-link-custom:hover {
-        color: #66fcf1;
-        background: rgba(102, 252, 241, 0.05);
+    .arcana-nav-link:hover {
+        color: var(--arc-gold);
+        border-color: rgba(212, 175, 55, 0.18);
+        background: rgba(212, 175, 55, 0.04);
+        box-shadow:
+            inset 0 0 12px rgba(212, 175, 55, 0.03),
+            0 0 18px rgba(212, 175, 55, 0.05);
+        transform: translateY(-1px);
     }
 
-    .nav-link-custom.active {
-        color: #0b0c10;
-        background: #66fcf1;
-        border-color: #66fcf1;
-        box-shadow: 0 0 15px rgba(102, 252, 241, 0.3);
-        font-weight: bold;
+    .arcana-nav-link.active {
+        color: #111;
+        background: linear-gradient(180deg, #d4af37 0%, #b8911f 100%);
+        border-color: rgba(212, 175, 55, 0.35);
+        box-shadow:
+            0 0 18px rgba(212, 175, 55, 0.18),
+            0 6px 18px rgba(0, 0, 0, 0.22);
     }
 
-    /* Back to HQ tugmasi */
-    .btn-back-to-hq {
-        color: #45a29e;
+    .arcana-contest-right {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .arcana-back-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         text-decoration: none;
-        font-size: 0.85rem;
-        border: 1px dashed #45a29e;
-        padding: 6px 15px;
-        transition: 0.3s;
+        padding: 11px 18px;
+        border-radius: 999px;
+        border: 1px solid rgba(212, 175, 55, 0.18);
+        background: rgba(255,255,255,0.015);
+        color: var(--arc-gold);
+        font-family: 'Cinzel', serif;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.08rem;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        box-shadow:
+            inset 0 0 12px rgba(212, 175, 55, 0.02),
+            0 0 16px rgba(212, 175, 55, 0.03);
     }
 
-    .btn-back-to-hq:hover {
-        background: rgba(69, 162, 158, 0.1);
-        color: #66fcf1;
-        border-style: solid;
+    .arcana-back-btn:hover {
+        color: #111;
+        background: linear-gradient(180deg, #d4af37 0%, #b8911f 100%);
+        border-color: rgba(212, 175, 55, 0.35);
+        transform: translateY(-1px);
+        box-shadow:
+            0 0 22px rgba(212, 175, 55, 0.20),
+            0 8px 18px rgba(0, 0, 0, 0.20);
     }
 
-    /* Status dot animatsiyasi */
-    .status-dot {
-        height: 8px;
-        width: 8px;
-        background-color: #28a745;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 5px;
-        box-shadow: 0 0 8px #28a745;
-    }
-
-    .animate-flicker {
-        animation: flicker-green 1s infinite alternate;
-    }
-
-    @keyframes flicker-green {
-        from { opacity: 0.4; transform: scale(0.9); }
-        to { opacity: 1; transform: scale(1.1); }
-    }
-
-    /* Mobile moslashuvchanlik */
-    @media (max-width: 768px) {
-        .contest-menu-links {
-            order: 3;
-            width: 100%;
+    @media (max-width: 992px) {
+        .arcana-contest-nav-inner {
             justify-content: center;
-            margin-top: 10px;
+            padding-bottom: 60px;
+        }
+
+        .arcana-contest-right {
+            position: absolute;
+            right: 50%;
+            top: auto;
+            bottom: 0;
+            transform: translateX(50%);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .arcana-contest-menu {
+            width: 100%;
+            gap: 10px;
+        }
+
+        .arcana-nav-link {
+            flex: 1 1 auto;
+            min-width: 160px;
+            font-size: 0.76rem;
+            padding: 11px 16px;
+        }
+
+        .arcana-back-btn {
+            font-size: 0.74rem;
+            padding: 10px 16px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .arcana-contest-nav {
+            padding: 14px 0 18px;
+        }
+
+        .arcana-contest-nav-inner {
+            padding-bottom: 56px;
+        }
+
+        .arcana-nav-link {
+            width: 100%;
+            min-width: unset;
         }
     }
 </style>
