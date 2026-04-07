@@ -55,13 +55,11 @@
                     <div class="arcana-card {% if challenge.id in solved_challenges %}arcana-card-solved{% endif %}">
                         <div class="arcana-inner">
 
-                            <!-- ornaments -->
                             <div class="arc-ornament top-l"></div>
                             <div class="arc-ornament top-r"></div>
                             <div class="arc-ornament bot-l"></div>
                             <div class="arc-ornament bot-r"></div>
 
-                            <!-- header -->
                             <div class="arc-card-header d-flex justify-content-between align-items-center w-100 px-3 pt-3">
                                 <span class="arc-cat">{{ challenge.kategoriya|title|default:"General" }}</span>
                                 <div class="arc-pts">
@@ -70,7 +68,6 @@
                                 </div>
                             </div>
 
-                            <!-- symbol -->
                             <div class="arc-symbol-area">
                                 <div class="arc-icon">
                                     {% if challenge.id in solved_challenges %}
@@ -87,7 +84,6 @@
                                 {% endif %}
                             </div>
 
-                            <!-- info -->
                             <div class="arc-info text-center px-3">
                                 <h5 class="arc-name">{{ challenge.nomi|upper }}</h5>
 
@@ -110,14 +106,13 @@
                                 </div>
                             </div>
 
-                            <!-- footer -->
                             <div class="arc-footer w-100 px-3 pb-3 mt-auto">
                                 {% if challenge.id in solved_challenges %}
-                                    <a href="{% url 'challenge_detail' challenge.id %}" class="arc-btn btn-solved">
+                                    <a href="{% url 'contest_challenge_detail' contest.id challenge.id %}" class="arc-btn btn-solved">
                                         COMPROMISED
                                     </a>
                                 {% else %}
-                                    <a href="{% url 'challenge_detail' challenge.id %}" class="arc-btn">
+                                    <a href="{% url 'contest_challenge_detail' contest.id challenge.id %}" class="arc-btn">
                                         REVEAL TRUTH
                                     </a>
                                 {% endif %}
