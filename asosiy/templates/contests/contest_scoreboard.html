@@ -8,7 +8,6 @@
 
     <div class="container py-5 position-relative">
 
-        <!-- HERO -->
         <section class="arcana-scoreboard-hero text-center">
             <p class="arcana-overline mb-2">HALL OF FAME</p>
             <h1 class="arcana-page-title">{{ contest.nomi|upper }} — SCOREBOARD</h1>
@@ -18,7 +17,15 @@
             </p>
         </section>
 
-        <!-- TOP 3 -->
+        {% if not contest_active %}
+        <section class="mb-5">
+            <div class="arcana-info-banner text-center">
+                <div class="arcana-info-label mb-2">INFO</div>
+                <div class="arcana-info-message">{{ contest_message }}</div>
+            </div>
+        </section>
+        {% endif %}
+
         {% if scoreboard_data %}
         <section class="arcana-podium-section mb-5">
             <div class="row justify-content-center align-items-end g-4">
@@ -65,7 +72,6 @@
         </section>
         {% endif %}
 
-        <!-- TABLE -->
         <section class="arcana-panel">
             <div class="arcana-panel-top">
                 <div class="arcana-panel-title">
@@ -201,6 +207,27 @@
         position: relative;
         z-index: 2;
         padding: 10px 0 24px;
+    }
+
+    .arcana-info-banner {
+        border: 1px solid var(--arc-line);
+        border-radius: 22px;
+        background: rgba(255,255,255,0.02);
+        padding: 22px 18px;
+        box-shadow: 0 0 24px rgba(212,175,55,0.04);
+    }
+
+    .arcana-info-label {
+        color: var(--arc-gold);
+        font-family: 'Cinzel', serif;
+        letter-spacing: 0.14rem;
+        font-size: 0.8rem;
+    }
+
+    .arcana-info-message {
+        color: var(--arc-text);
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
     }
 
     .arcana-overline {
@@ -563,9 +590,7 @@
         background: rgba(255,255,255,0.015);
     }
 
-    .text-gold {
-        color: #d4af37;
-    }
+    .text-gold { color: #d4af37; }
 
     .score {
         font-size: 1.15rem;
@@ -591,13 +616,8 @@
     }
 
     @media (max-width: 768px) {
-        .origin-cell {
-            display: none;
-        }
-
-        .arcana-table thead th:nth-child(3) {
-            display: none;
-        }
+        .origin-cell { display: none; }
+        .arcana-table thead th:nth-child(3) { display: none; }
     }
 
     @media (max-width: 576px) {
@@ -606,9 +626,7 @@
             font-size: 0.7rem;
         }
 
-        .arcana-hero-subtitle {
-            font-size: 0.92rem;
-        }
+        .arcana-hero-subtitle { font-size: 0.92rem; }
 
         .arcana-panel-top {
             flex-direction: column;
@@ -616,9 +634,7 @@
             gap: 8px;
         }
 
-        .score-number {
-            font-size: 1.6rem;
-        }
+        .score-number { font-size: 1.6rem; }
     }
 </style>
 {% endblock %}

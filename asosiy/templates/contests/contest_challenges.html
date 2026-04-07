@@ -8,7 +8,6 @@
 
     <div class="container py-5 position-relative">
 
-        <!-- Header -->
         <section class="arcana-challenges-hero text-center">
             <p class="arcana-overline mb-2">THE CONTEST GRIMOIRE</p>
             <h1 class="arcana-page-title">{{ contest.nomi|upper }} — CHALLENGES</h1>
@@ -18,7 +17,15 @@
             </p>
         </section>
 
-        <!-- Stats -->
+        {% if not contest_active %}
+        <section class="mb-5">
+            <div class="arcana-info-banner text-center">
+                <div class="arcana-info-label mb-2">INFO</div>
+                <div class="arcana-info-message">{{ contest_message }}</div>
+            </div>
+        </section>
+        {% endif %}
+
         <section class="row g-4 mb-5 justify-content-center">
             <div class="col-xl-3 col-md-4 col-sm-6">
                 <div class="arcana-stat-card text-center">
@@ -48,11 +55,10 @@
             </div>
         </section>
 
-        <!-- Cards -->
         <section class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4 justify-content-center">
             {% for challenge in challenges %}
                 <div class="col d-flex justify-content-center">
-                    <div class="arcana-card {% if challenge.id in solved_challenges %}arcana-card-solved{% endif %}">
+                    <div class="arcana-card {% if challenge.id in solved_challenges %}arcana-card-solved{% endif %} {% if not contest_active %}arcana-card-disabled{% endif %}">
                         <div class="arcana-inner">
 
                             <div class="arc-ornament top-l"></div>
@@ -107,14 +113,20 @@
                             </div>
 
                             <div class="arc-footer w-100 px-3 pb-3 mt-auto">
-                                {% if challenge.id in solved_challenges %}
-                                    <a href="{% url 'contest_challenge_detail' contest.id challenge.id %}" class="arc-btn btn-solved">
-                                        COMPROMISED
-                                    </a>
+                                {% if contest_active %}
+                                    {% if challenge.id in solved_challenges %}
+                                        <a href="{% url 'contest_challenge_detail' contest.id challenge.id %}" class="arc-btn btn-solved">
+                                            COMPROMISED
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'contest_challenge_detail' contest.id challenge.id %}" class="arc-btn">
+                                            REVEAL TRUTH
+                                        </a>
+                                    {% endif %}
                                 {% else %}
-                                    <a href="{% url 'contest_challenge_detail' contest.id challenge.id %}" class="arc-btn">
-                                        REVEAL TRUTH
-                                    </a>
+                                    <span class="arc-btn arc-btn-disabled">
+                                        {% if contest_ended %}CONTEST ENDED{% else %}NOT STARTED YET{% endif %}
+                                    </span>
                                 {% endif %}
                             </div>
 
@@ -183,6 +195,27 @@
         z-index: 2;
         padding: 10px 0 20px;
         margin-bottom: 10px;
+    }
+
+    .arcana-info-banner {
+        border: 1px solid var(--arc-line);
+        border-radius: 22px;
+        background: rgba(255,255,255,0.02);
+        padding: 22px 18px;
+        box-shadow: 0 0 24px rgba(212,175,55,0.04);
+    }
+
+    .arcana-info-label {
+        color: var(--arc-gold);
+        font-family: 'Cinzel', serif;
+        letter-spacing: 0.14rem;
+        font-size: 0.8rem;
+    }
+
+    .arcana-info-message {
+        color: var(--arc-text);
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
     }
 
     .arcana-overline {
@@ -272,6 +305,10 @@
             0 0 24px rgba(212,175,55,0.08);
     }
 
+    .arcana-card-disabled {
+        opacity: 0.82;
+    }
+
     .arcana-card-solved {
         border-color: rgba(25, 135, 84, 0.55);
         box-shadow:
@@ -304,10 +341,7 @@
     .bot-l { bottom: 5px; left: 5px; border-right: 0; border-top: 0; }
     .bot-r { bottom: 5px; right: 5px; border-left: 0; border-top: 0; }
 
-    .arc-card-header {
-        position: relative;
-        z-index: 2;
-    }
+    .arc-card-header { position: relative; z-index: 2; }
 
     .arc-cat {
         font-family: 'Playfair Display', serif;
@@ -325,9 +359,7 @@
         letter-spacing: 1px;
     }
 
-    .text-gold {
-        color: #d4af37;
-    }
+    .text-gold { color: #d4af37; }
 
     .arc-symbol-area {
         flex: 1;
@@ -368,10 +400,7 @@
         z-index: 1;
     }
 
-    .arc-info {
-        position: relative;
-        z-index: 2;
-    }
+    .arc-info { position: relative; z-index: 2; }
 
     .arc-name {
         font-family: 'Cinzel', serif;
@@ -415,10 +444,7 @@
     .active-medium { background: #ffc107 !important; box-shadow: 0 0 5px #ffc107; }
     .active-hard { background: #dc3545 !important; box-shadow: 0 0 5px #dc3545; }
 
-    .arc-footer {
-        position: relative;
-        z-index: 2;
-    }
+    .arc-footer { position: relative; z-index: 2; }
 
     .arc-btn {
         display: block;
@@ -441,6 +467,14 @@
         background: #d4af37;
         color: #000;
         box-shadow: 0 0 20px rgba(212, 175, 55, 0.16);
+    }
+
+    .arc-btn-disabled {
+        border-color: #555;
+        color: #999;
+        background: rgba(255,255,255,0.03);
+        cursor: not-allowed;
+        pointer-events: none;
     }
 
     .btn-solved {
@@ -484,9 +518,7 @@
     }
 
     @media (max-width: 991px) {
-        .arcana-page-title {
-            font-size: 2.2rem;
-        }
+        .arcana-page-title { font-size: 2.2rem; }
     }
 
     @media (max-width: 576px) {
@@ -495,17 +527,9 @@
             font-size: 0.7rem;
         }
 
-        .arcana-hero-subtitle {
-            font-size: 0.92rem;
-        }
-
-        .arcana-card {
-            max-width: 100%;
-        }
-
-        .arcana-stat-value {
-            font-size: 1.5rem;
-        }
+        .arcana-hero-subtitle { font-size: 0.92rem; }
+        .arcana-card { max-width: 100%; }
+        .arcana-stat-value { font-size: 1.5rem; }
     }
 </style>
 {% endblock %}

@@ -1,18 +1,58 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Profil, Challenge, Yechim, Urinish, BloklanganChallenge, Contest, ContestParticipant
-from .forms import ProfilOzgertirishForm, FoydalanuvchiRoYXatgaOlishForm
 from django.contrib import messages
 from django.db.models import Sum
+from django.utils import timezone
+
+from .models import (
+    Profil,
+    Challenge,
+    Yechim,
+    Urinish,
+    BloklanganChallenge,
+    Contest,
+    ContestParticipant
+)
+from .forms import ProfilOzgertirishForm, FoydalanuvchiRoYXatgaOlishForm
 
 MAX_URINISH = 3
+
+
+# --- YORDAMCHI FUNKSIYA: contest holatini aniqlash ---
+def get_contest_status(contest):
+    now = timezone.now()
+
+    if now < contest.start_date:
+        return {
+            'contest_started': False,
+            'contest_ended': False,
+            'contest_active': False,
+            'contest_message': "This Contest has not started yet."
+        }
+
+    if now > contest.end_date:
+        return {
+            'contest_started': True,
+            'contest_ended': True,
+            'contest_active': False,
+            'contest_message': "This Contest has already ended."
+        }
+
+    return {
+        'contest_started': True,
+        'contest_ended': False,
+        'contest_active': True,
+        'contest_message': "Contest is live."
+    }
 
 
 # --- CONTEST LIST ---
 def contest_list(request):
     contests = Contest.objects.all().order_by('-start_date')
-    return render(request, 'contests/contest_list.html', {'contests': contests})
+    return render(request, 'contests/contest_list.html', {
+        'contests': contests
+    })
 
 
 # --- CONTEST DETAIL (JOIN PAGE) ---
@@ -20,9 +60,13 @@ def contest_list(request):
 def contest_detail(request, contest_id):
     contest = get_object_or_404(Contest, id=contest_id)
     is_joined = ContestParticipant.objects.filter(user=request.user, contest=contest).exists()
+
+    status = get_contest_status(contest)
+
     return render(request, 'contests/contest_detail.html', {
         'contest': contest,
-        'is_joined': is_joined
+        'is_joined': is_joined,
+        **status
     })
 
 
@@ -30,6 +74,12 @@ def contest_detail(request, contest_id):
 @login_required
 def join_contest(request, contest_id):
     contest = get_object_or_404(Contest, id=contest_id)
+    status = get_contest_status(contest)
+
+    if status['contest_ended']:
+        messages.error(request, "This Contest has already ended.")
+        return redirect('contest_detail', contest_id=contest.id)
+
     ContestParticipant.objects.get_or_create(user=request.user, contest=contest)
     messages.success(request, f"Welcome to {contest.nomi}!")
     return redirect('contest_challenges', contest_id=contest.id)
@@ -40,18 +90,25 @@ def join_contest(request, contest_id):
 def contest_challenges(request, contest_id):
     contest = get_object_or_404(Contest, id=contest_id)
 
-    # Faqat shu contestga tegishli challengelar
+    if not ContestParticipant.objects.filter(user=request.user, contest=contest).exists():
+        messages.error(request, "Avval musobaqaga qo'shiling!")
+        return redirect('contest_detail', contest_id=contest.id)
+
     challenges = Challenge.objects.filter(contest=contest)
 
     solved_ids = Yechim.objects.filter(
         user=request.user,
-        challenge__contest=contest
+        challenge__contest=contest,
+        contest=contest
     ).values_list('challenge_id', flat=True)
+
+    status = get_contest_status(contest)
 
     return render(request, 'contests/contest_challenges.html', {
         'contest': contest,
         'challenges': challenges,
-        'solved_challenges': list(solved_ids)
+        'solved_challenges': list(solved_ids),
+        **status
     })
 
 
@@ -61,19 +118,28 @@ def contest_challenge_detail(request, contest_id, challenge_id):
     contest = get_object_or_404(Contest, id=contest_id)
     challenge = get_object_or_404(Challenge, id=challenge_id, contest=contest)
 
-    # user contestga qo'shilgan bo'lishi shart
     if not ContestParticipant.objects.filter(user=request.user, contest=contest).exists():
         messages.error(request, "Avval musobaqaga qo'shiling!")
         return redirect('contest_detail', contest_id=contest.id)
 
-    urinishlar_soni = Urinish.objects.filter(user=request.user, challenge=challenge).count()
-    bloklangan = BloklanganChallenge.objects.filter(user=request.user, challenge=challenge).exists()
+    urinishlar_soni = Urinish.objects.filter(
+        user=request.user,
+        challenge=challenge
+    ).count()
+
+    bloklangan = BloklanganChallenge.objects.filter(
+        user=request.user,
+        challenge=challenge
+    ).exists()
 
     first_solvers = Yechim.objects.filter(
-        challenge=challenge
+        challenge=challenge,
+        contest=contest
     ).select_related('user', 'user__profil').order_by('yechilgan_vaqt')[:5]
 
     first_solvers_data = [yechim.user for yechim in first_solvers]
+
+    status = get_contest_status(contest)
 
     return render(request, 'contests/contest_challenge_detail.html', {
         'contest': contest,
@@ -82,6 +148,7 @@ def contest_challenge_detail(request, contest_id, challenge_id):
         'max_urinish': MAX_URINISH,
         'bloklangan': bloklangan,
         'first_solvers_data': first_solvers_data,
+        **status
     })
 
 
@@ -89,10 +156,21 @@ def contest_challenge_detail(request, contest_id, challenge_id):
 @login_required
 def contest_participants(request, contest_id):
     contest = get_object_or_404(Contest, id=contest_id)
-    participants = ContestParticipant.objects.filter(contest=contest).select_related('user__profil')
+
+    if not ContestParticipant.objects.filter(user=request.user, contest=contest).exists():
+        messages.error(request, "Avval musobaqaga qo'shiling!")
+        return redirect('contest_detail', contest_id=contest.id)
+
+    participants = ContestParticipant.objects.filter(
+        contest=contest
+    ).select_related('user__profil')
+
+    status = get_contest_status(contest)
+
     return render(request, 'contests/contest_participants.html', {
         'contest': contest,
-        'participants': participants
+        'participants': participants,
+        **status
     })
 
 
@@ -100,16 +178,26 @@ def contest_participants(request, contest_id):
 @login_required
 def contest_scoreboard(request, contest_id):
     contest = get_object_or_404(Contest, id=contest_id)
-    participants = ContestParticipant.objects.filter(contest=contest)
+
+    if not ContestParticipant.objects.filter(user=request.user, contest=contest).exists():
+        messages.error(request, "Avval musobaqaga qo'shiling!")
+        return redirect('contest_detail', contest_id=contest.id)
+
+    participants = ContestParticipant.objects.filter(contest=contest).select_related('user__profil')
     scoreboard_data = []
 
     for part in participants:
         user = part.user
 
-        yechimlar = Yechim.objects.filter(user=user, challenge__contest=contest)
+        yechimlar = Yechim.objects.filter(
+            user=user,
+            contest=contest,
+            challenge__contest=contest
+        ).select_related('challenge')
+
         total_points = sum([y.challenge.ochko for y in yechimlar])
 
-        solved_flags = yechimlar.values_list('challenge__flag', flat=True)
+        solved_flags = list(yechimlar.values_list('challenge__flag', flat=True))
 
         penalties = Urinish.objects.filter(
             user=user,
@@ -123,11 +211,18 @@ def contest_scoreboard(request, contest_id):
             'penalty': penalties
         })
 
-    scoreboard_data = sorted(scoreboard_data, key=lambda x: x['total_score'], reverse=True)
+    scoreboard_data = sorted(
+        scoreboard_data,
+        key=lambda x: (x['total_score'], x['solved_count']),
+        reverse=True
+    )
+
+    status = get_contest_status(contest)
 
     return render(request, 'contests/contest_scoreboard.html', {
         'contest': contest,
-        'scoreboard_data': scoreboard_data
+        'scoreboard_data': scoreboard_data,
+        **status
     })
 
 
@@ -135,8 +230,10 @@ def contest_scoreboard(request, contest_id):
 @login_required
 def challenge_list(request):
     challenges = Challenge.objects.filter(contest__isnull=True)
+
     solved_challenges_ids = Yechim.objects.filter(
         user=request.user,
+        contest__isnull=True,
         challenge__contest__isnull=True
     ).values_list('challenge_id', flat=True)
 
@@ -156,10 +253,17 @@ def challenge_list(request):
 def challenge_detail(request, challenge_id):
     challenge = get_object_or_404(Challenge, pk=challenge_id)
 
+    # agar bu contest challenge bo'lsa, oddiy detailga kiritmaymiz
     if challenge.contest:
         if not ContestParticipant.objects.filter(user=request.user, contest=challenge.contest).exists():
             messages.error(request, "Avval musobaqaga qo'shiling!")
             return redirect('contest_detail', contest_id=challenge.contest.id)
+
+        return redirect(
+            'contest_challenge_detail',
+            contest_id=challenge.contest.id,
+            challenge_id=challenge.id
+        )
 
     urinishlar_soni = Urinish.objects.filter(user=request.user, challenge=challenge).count()
     bloklangan = BloklanganChallenge.objects.filter(user=request.user, challenge=challenge).exists()
@@ -179,8 +283,17 @@ def challenge_detail(request, challenge_id):
 def yechish(request, challenge_id):
     challenge = get_object_or_404(Challenge, pk=challenge_id)
 
-    # qayerdan kelganini bilish uchun
-    contest_id = request.POST.get('contest_id')
+    if challenge.contest:
+        contest = challenge.contest
+        status = get_contest_status(contest)
+
+        if status['contest_ended']:
+            messages.error(request, "This Contest has already ended.")
+            return redirect('contest_challenge_detail', contest_id=contest.id, challenge_id=challenge.id)
+
+        if not status['contest_started']:
+            messages.warning(request, "This Contest has not started yet.")
+            return redirect('contest_challenge_detail', contest_id=contest.id, challenge_id=challenge.id)
 
     if BloklanganChallenge.objects.filter(user=request.user, challenge=challenge).exists():
         messages.warning(request, "Siz bloklangansiz.")
@@ -198,7 +311,11 @@ def yechish(request, challenge_id):
         Urinish.objects.create(user=request.user, challenge=challenge, javob=flag)
 
         if flag == challenge.flag:
-            Yechim.objects.create(user=request.user, challenge=challenge, contest=challenge.contest)
+            Yechim.objects.create(
+                user=request.user,
+                challenge=challenge,
+                contest=challenge.contest
+            )
             challenge.solved_count += 1
             challenge.save()
 
@@ -262,15 +379,16 @@ def register(request):
     return render(request, 'registration/register.html', {'form': form})
 
 
-# --- UMUMIY SCOREBOARD (PRACTICE) ---
+# --- UMUMIY SCOREBOARD (FAQAT PRACTICE) ---
 def scoreboard(request):
-    users = User.objects.all()
+    users = User.objects.all().select_related('profil')
     sb = []
 
     for user in users:
         pts = Yechim.objects.filter(
             user=user,
-            contest__isnull=True
+            contest__isnull=True,
+            challenge__contest__isnull=True
         ).aggregate(s=Sum('challenge__ochko'))['s'] or 0
 
         sb.append({
