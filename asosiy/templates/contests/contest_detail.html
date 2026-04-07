@@ -2,148 +2,449 @@
 {% load static %}
 
 {% block content %}
-<!-- Contest uchun maxsus Navbar -->
+
 {% include 'includes/contest_navbar.html' %}
 
-<div class="contest-detail-wrapper py-5" style="background-color: #0b0c10; min-height: 100vh; color: #c5c6c7;">
-    <div class="container">
-        
-        <!-- Header qismi: Musobaqa nomi va holati -->
-        <div class="text-center mb-5">
-            <h1 class="display-3 font-cinzel text-white fw-bold mb-3" style="letter-spacing: 5px; text-shadow: 0 0 20px rgba(102, 252, 241, 0.5);">
-                {{ contest.nomi|upper }}
-            </h1>
-            
-            <div class="d-flex justify-content-center gap-2 mb-4">
-                <span class="badge rounded-pill bg-cyan-outline">TYPE: {{ contest.get_tipi_display|upper }}</span>
-                <span class="badge rounded-pill bg-grey-outline">FORMAT: {{ contest.get_formati_display|upper }}</span>
-                <span class="badge rounded-pill bg-purple-outline">PARTICIPATION: {{ contest.get_qatnashish_display|upper }}</span>
-            </div>
+<div class="arcanasec-detail-page">
+    <div class="arcana-bg-layer"></div>
+    <div class="arcana-noise-layer"></div>
 
-            <!-- Musobaqa vaqti va statusi -->
-            <div class="contest-status-box d-inline-block p-3 rounded border border-secondary bg-dark-soft">
-                <div class="d-flex align-items-center gap-4">
-                    <div class="text-start">
-                        <small class="text-uppercase text-muted d-block">Start Date</small>
-                        <span class="text-info">{{ contest.start_date|date:"d M Y, H:i" }}</span>
-                    </div>
-                    <div class="vr bg-secondary"></div>
-                    <div class="text-start">
-                        <small class="text-uppercase text-muted d-block">Status</small>
-                        <span class="text-success"><i class="bi bi-record-fill animate-flicker"></i> LIVE / ACTIVE</span>
-                    </div>
-                </div>
+    <div class="container py-5 position-relative">
+
+        <!-- Header -->
+        <div class="arcana-detail-hero text-center mb-5">
+            <p class="arcana-overline mb-2">THE RITUAL OF ASCENSION</p>
+            <h1 class="arcana-contest-title mb-3">{{ contest.nomi|upper }}</h1>
+            <div class="arcana-line mx-auto mb-4"></div>
+
+            <div class="arcana-meta-wrap d-flex justify-content-center flex-wrap gap-3">
+                <span class="arcana-pill">
+                    <i class="bi bi-shield-lock me-2"></i>
+                    TYPE: {{ contest.get_tipi_display|upper }}
+                </span>
+                <span class="arcana-pill">
+                    <i class="bi bi-trophy me-2"></i>
+                    FORMAT: {{ contest.get_formati_display|upper }}
+                </span>
+                <span class="arcana-pill">
+                    <i class="bi bi-people me-2"></i>
+                    PARTICIPATION: {{ contest.get_qatnashish_display|upper }}
+                </span>
             </div>
         </div>
 
-        <!-- Markaziy ma'lumot bloki -->
+        <!-- Main content -->
         <div class="row justify-content-center">
-            <div class="col-lg-9">
-                <div class="card bg-dark-card border-0 shadow-lg position-relative overflow-hidden">
-                    <!-- Bezak uchun chiziqlar -->
-                    <div class="corner-decoration top-left"></div>
-                    <div class="corner-decoration bottom-right"></div>
+            <div class="col-xl-10 col-lg-11">
 
-                    <div class="card-body p-5">
-                        <h2 class="text-center text-white mb-4 border-bottom border-secondary pb-3 font-cinzel">
-                            {{ contest.nomi }} — Mission Briefing
-                        </h2>
-                        
-                        <div class="mission-description fs-5 lh-lg mb-5 text-justify">
-                            {% if contest.tavsif %}
-                                {{ contest.tavsif|linebreaks }}
-                            {% else %}
-                                <p class="text-center italic opacity-50">Ushbu musobaqa uchun tavsif hali qo'shilmagan.</p>
-                            {% endif %}
+                <div class="arcana-detail-panel">
+
+                    <div class="arcana-panel-top">
+                        <div class="arcana-panel-title">
+                            <span class="arcana-panel-dot"></span>
+                            MISSION BRIEFING
+                        </div>
+                        <div class="arcana-panel-side-text">ARCANASEC</div>
+                    </div>
+
+                    <div class="arcana-detail-body">
+
+                        <!-- Dates -->
+                        <div class="row g-4 mb-5">
+                            <div class="col-md-6">
+                                <div class="arcana-info-card h-100">
+                                    <div class="arcana-info-label">START DATE</div>
+                                    <div class="arcana-info-value">
+                                        {{ contest.start_date|date:"d M Y, H:i" }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="arcana-info-card h-100">
+                                    <div class="arcana-info-label">END DATE</div>
+                                    <div class="arcana-info-value">
+                                        {{ contest.end_date|date:"d M Y, H:i" }}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Harakat tugmalari -->
-                        <div class="action-zone text-center mt-5 pt-4 border-top border-secondary">
+                        <!-- Description -->
+                        <div class="arcana-description-block mb-5">
+                            <h2 class="arcana-section-title mb-4">
+                                {{ contest.nomi|upper }} — SACRED TEXT
+                            </h2>
+
+                            <div class="arcana-description">
+                                {% if contest.tavsif %}
+                                    {{ contest.tavsif|linebreaks }}
+                                {% else %}
+                                    <p class="arcana-empty-text text-center mb-0">
+                                        THIS CONTEST HAS NOT YET RECEIVED ITS DESCRIPTION.
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Action zone -->
+                        <div class="arcana-action-zone text-center">
                             {% if not is_joined %}
-                                <h4 class="text-gold mb-4 fw-light">Are you ready to enter the ritual?</h4>
+                                <h4 class="arcana-action-title mb-4">Are you ready to enter the ritual?</h4>
                                 <form action="{% url 'join_contest' contest.id %}" method="post">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-join-ritual btn-lg px-5 py-3">
-                                        JOIN CONTEST <i class="bi bi-shield-shaded ms-2"></i>
+                                    <button type="submit" class="arcana-btn arcana-btn-gold">
+                                        JOIN CONTEST
+                                        <i class="bi bi-arrow-up-right-circle ms-2"></i>
                                     </button>
                                 </form>
                             {% else %}
-                                <div class="joined-status mb-4">
-                                    <span class="text-success fs-4"><i class="bi bi-check2-all me-2"></i> You are a registered participant.</span>
+                                <div class="arcana-joined-status mb-4">
+                                    <i class="bi bi-stars me-2"></i>
+                                    You are already among the chosen participants.
                                 </div>
-                                <a href="{% url 'contest_challenges' contest.id %}" class="btn btn-outline-cyan btn-lg px-5">
-                                    ENTER CHALLENGES <i class="bi bi-terminal ms-2"></i>
+
+                                <a href="{% url 'contest_challenges' contest.id %}" class="arcana-btn arcana-btn-dark">
+                                    ENTER CHALLENGES
+                                    <i class="bi bi-terminal ms-2"></i>
                                 </a>
                             {% endif %}
                         </div>
+
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
 
 <style>
-    /* Maxsus Ranglar va Fontlar */
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Share+Tech+Mono&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&family=Share+Tech+Mono&display=swap');
 
-    .font-cinzel { font-family: 'Cinzel', serif; }
-    .bg-dark-soft { background: rgba(31, 40, 51, 0.4); }
-    .bg-dark-card { background: #1f2833; border-radius: 15px; }
-    .text-gold { color: #d4af37; }
-
-    /* Badge Styles */
-    .bg-cyan-outline { border: 1px solid #66fcf1; color: #66fcf1; background: transparent; }
-    .bg-grey-outline { border: 1px solid #c5c6c7; color: #c5c6c7; background: transparent; }
-    .bg-purple-outline { border: 1px solid #833ab4; color: #833ab4; background: transparent; }
-
-    /* Join Button */
-    .btn-join-ritual {
-        background: transparent;
-        border: 2px solid #66fcf1;
-        color: #66fcf1;
-        transition: all 0.4s ease;
-        font-family: 'Share Tech Mono', monospace;
-        letter-spacing: 2px;
-    }
-    .btn-join-ritual:hover {
-        background: #66fcf1;
-        color: #0b0c10;
-        box-shadow: 0 0 30px rgba(102, 252, 241, 0.4);
-        transform: translateY(-3px);
+    :root {
+        --arc-bg: #050505;
+        --arc-bg-soft: #0b0b0d;
+        --arc-gold: #d4af37;
+        --arc-gold-soft: rgba(212, 175, 55, 0.14);
+        --arc-gold-strong: rgba(212, 175, 55, 0.28);
+        --arc-text: #f3efe3;
+        --arc-muted: #aa9f86;
+        --arc-line: rgba(212, 175, 55, 0.18);
+        --arc-panel: rgba(10, 10, 12, 0.42);
     }
 
-    .btn-outline-cyan {
-        border: 1px solid #45a29e;
-        color: #45a29e;
-    }
-    .btn-outline-cyan:hover {
-        background: #45a29e;
-        color: white;
+    .arcanasec-detail-page {
+        position: relative;
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at top center, rgba(212, 175, 55, 0.08), transparent 28%),
+            radial-gradient(circle at 20% 20%, rgba(85, 60, 20, 0.10), transparent 20%),
+            linear-gradient(180deg, #030303 0%, #070707 50%, #050505 100%);
+        overflow: hidden;
     }
 
-    /* Bezaklar */
-    .corner-decoration {
+    .arcana-bg-layer {
         position: absolute;
-        width: 40px;
-        height: 40px;
-        border: 3px solid #45a29e;
-    }
-    .top-left { top: 0; left: 0; border-right: none; border-bottom: none; }
-    .bottom-right { bottom: 0; right: 0; border-left: none; border-top: none; }
-
-    /* Animatsiya */
-    .animate-flicker {
-        animation: flicker 1.5s infinite alternate;
-    }
-    @keyframes flicker {
-        0% { opacity: 0.4; }
-        100% { opacity: 1; text-shadow: 0 0 10px #28a745; }
+        inset: 0;
+        background:
+            linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+        background-size: 80px 80px;
+        opacity: 0.10;
+        pointer-events: none;
     }
 
-    .mission-description {
-        color: #a4a5a6;
+    .arcana-noise-layer {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 60%);
+        mix-blend-mode: screen;
+        opacity: 0.20;
+        pointer-events: none;
+    }
+
+    .arcana-detail-hero {
+        position: relative;
+        z-index: 2;
+        padding-top: 20px;
+    }
+
+    .arcana-overline {
+        font-family: 'Inter', sans-serif;
+        letter-spacing: 0.45rem;
+        text-transform: uppercase;
+        color: var(--arc-gold);
+        font-size: 0.76rem;
+        opacity: 0.95;
+    }
+
+    .arcana-contest-title {
+        font-family: 'Cinzel', serif;
+        color: var(--arc-text);
+        font-size: clamp(2.2rem, 5vw, 4.8rem);
+        font-weight: 700;
+        letter-spacing: 0.12rem;
+        text-transform: uppercase;
+        text-shadow:
+            0 0 12px rgba(212, 175, 55, 0.18),
+            0 0 30px rgba(212, 175, 55, 0.08);
+    }
+
+    .arcana-line {
+        width: 180px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--arc-gold), transparent);
+        box-shadow: 0 0 16px rgba(212, 175, 55, 0.22);
+    }
+
+    .arcana-meta-wrap {
+        margin-top: 10px;
+    }
+
+    .arcana-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 18px;
+        border-radius: 999px;
+        color: var(--arc-gold);
+        border: 1px solid rgba(212, 175, 55, 0.22);
+        background: rgba(255,255,255,0.02);
+        font-family: 'Cinzel', serif;
+        font-size: 0.82rem;
+        font-weight: 600;
+        letter-spacing: 0.08rem;
+        text-transform: uppercase;
+        box-shadow:
+            inset 0 0 12px rgba(212,175,55,0.03),
+            0 0 16px rgba(212,175,55,0.03);
+    }
+
+    .arcana-detail-panel {
+        position: relative;
+        z-index: 2;
+        border: 1px solid var(--arc-line);
+        border-radius: 28px;
+        overflow: hidden;
+        background: transparent;
+        box-shadow:
+            0 0 40px rgba(212,175,55,0.05);
+        backdrop-filter: blur(2px);
+    }
+
+    .arcana-panel-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 22px 28px;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.14);
+        background: transparent;
+    }
+
+    .arcana-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--arc-gold);
+        font-family: 'Cinzel', serif;
+        font-weight: 600;
+        letter-spacing: 0.10rem;
+        font-size: 0.96rem;
+    }
+
+    .arcana-panel-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--arc-gold);
+        box-shadow: 0 0 14px rgba(212, 175, 55, 0.45);
+    }
+
+    .arcana-panel-side-text {
+        color: rgba(212, 175, 55, 0.45);
         font-family: 'Share Tech Mono', monospace;
+        font-size: 0.8rem;
+        letter-spacing: 0.15rem;
+    }
+
+    .arcana-detail-body {
+        padding: 34px 30px 38px;
+    }
+
+    .arcana-info-card {
+        border: 1px solid rgba(212, 175, 55, 0.14);
+        border-radius: 20px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+        padding: 24px 22px;
+        box-shadow:
+            inset 0 0 14px rgba(212,175,55,0.02),
+            0 0 18px rgba(0,0,0,0.18);
+    }
+
+    .arcana-info-label {
+        color: var(--arc-gold);
+        font-family: 'Cinzel', serif;
+        font-size: 0.82rem;
+        letter-spacing: 0.14rem;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+    }
+
+    .arcana-info-value {
+        color: var(--arc-text);
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 1rem;
+    }
+
+    .arcana-description-block {
+        border-top: 1px solid rgba(212, 175, 55, 0.10);
+        border-bottom: 1px solid rgba(212, 175, 55, 0.10);
+        padding: 34px 0;
+    }
+
+    .arcana-section-title {
+        color: var(--arc-text);
+        font-family: 'Cinzel', serif;
+        font-size: 1.5rem;
+        text-align: center;
+        letter-spacing: 0.08rem;
+        text-transform: uppercase;
+        text-shadow: 0 0 14px rgba(212, 175, 55, 0.08);
+    }
+
+    .arcana-description {
+        color: #c9bea9;
+        font-family: 'Inter', sans-serif;
+        font-size: 1.02rem;
+        line-height: 1.95;
+    }
+
+    .arcana-description p {
+        margin-bottom: 1rem;
+    }
+
+    .arcana-empty-text {
+        color: var(--arc-muted);
+        font-family: 'Cinzel', serif;
+        letter-spacing: 0.06rem;
+    }
+
+    .arcana-action-zone {
+        padding-top: 8px;
+    }
+
+    .arcana-action-title {
+        color: var(--arc-gold);
+        font-family: 'Cinzel', serif;
+        font-weight: 500;
+        letter-spacing: 0.05rem;
+    }
+
+    .arcana-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        border-radius: 14px;
+        padding: 14px 28px;
+        font-family: 'Cinzel', serif;
+        font-weight: 700;
+        font-size: 0.92rem;
+        letter-spacing: 0.08rem;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+    }
+
+    .arcana-btn-gold {
+        background: linear-gradient(180deg, #d4af37 0%, #b8911f 100%);
+        color: #111;
+        border-color: rgba(212, 175, 55, 0.35);
+        box-shadow: 0 0 18px rgba(212, 175, 55, 0.15);
+    }
+
+    .arcana-btn-gold:hover {
+        color: #000;
+        transform: translateY(-2px);
+        box-shadow:
+            0 0 24px rgba(212, 175, 55, 0.25),
+            0 10px 24px rgba(0,0,0,0.18);
+    }
+
+    .arcana-btn-dark {
+        background: rgba(255,255,255,0.02);
+        color: var(--arc-gold);
+        border-color: rgba(212, 175, 55, 0.22);
+        box-shadow:
+            inset 0 0 14px rgba(212,175,55,0.02),
+            0 0 16px rgba(212,175,55,0.03);
+    }
+
+    .arcana-btn-dark:hover {
+        color: #111;
+        background: linear-gradient(180deg, #d4af37 0%, #b8911f 100%);
+        border-color: rgba(212, 175, 55, 0.35);
+        transform: translateY(-2px);
+        box-shadow:
+            0 0 24px rgba(212, 175, 55, 0.22),
+            0 10px 24px rgba(0,0,0,0.18);
+    }
+
+    .arcana-joined-status {
+        color: #e7d7a6;
+        font-family: 'Cinzel', serif;
+        font-size: 1.05rem;
+        letter-spacing: 0.05rem;
+        text-shadow: 0 0 12px rgba(212, 175, 55, 0.12);
+    }
+
+    @media (max-width: 991px) {
+        .arcana-detail-body {
+            padding: 26px 20px 30px;
+        }
+
+        .arcana-panel-top {
+            padding: 18px 18px;
+        }
+
+        .arcana-contest-title {
+            font-size: 2.2rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .arcana-overline {
+            letter-spacing: 0.24rem;
+            font-size: 0.7rem;
+        }
+
+        .arcana-panel-top {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .arcana-pill {
+            width: 100%;
+            justify-content: center;
+            font-size: 0.76rem;
+        }
+
+        .arcana-info-value {
+            font-size: 0.92rem;
+        }
+
+        .arcana-section-title {
+            font-size: 1.15rem;
+        }
+
+        .arcana-description {
+            font-size: 0.95rem;
+        }
+
+        .arcana-btn {
+            width: 100%;
+        }
     }
 </style>
 
