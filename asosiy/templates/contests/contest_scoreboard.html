@@ -2,146 +2,160 @@
 {% load static %}
 
 {% block content %}
-<div class="arcana-contest-challenges-page">
+<div class="arcana-scoreboard-page">
     <div class="arcana-bg-layer"></div>
     <div class="arcana-noise-layer"></div>
 
     <div class="container py-5 position-relative">
 
-        <!-- Header -->
-        <section class="arcana-challenges-hero text-center">
-            <p class="arcana-overline mb-2">THE CONTEST GRIMOIRE</p>
-            <h1 class="arcana-page-title">{{ contest.nomi|upper }} — CHALLENGES</h1>
+        <!-- HERO -->
+        <section class="arcana-scoreboard-hero text-center">
+            <p class="arcana-overline mb-2">HALL OF FAME</p>
+            <h1 class="arcana-page-title">{{ contest.nomi|upper }} — SCOREBOARD</h1>
             <div class="arcana-line mx-auto my-4"></div>
             <p class="arcana-hero-subtitle mx-auto">
-                Reveal the sealed tasks of this ritual and advance through the sacred path of ArcanaSec.
+                Behold the seekers who have conquered the ritual and carved their names into the ArcanaSec ledger.
             </p>
         </section>
 
-        <!-- Stats -->
-        <section class="row g-4 mb-5 justify-content-center">
-            <div class="col-xl-3 col-md-4 col-sm-6">
-                <div class="arcana-stat-card text-center">
-                    <div class="arcana-stat-label">TOTAL TASKS</div>
-                    <div class="arcana-stat-value">{{ challenges.count }}</div>
-                </div>
-            </div>
+        <!-- TOP 3 -->
+        {% if scoreboard_data %}
+        <section class="arcana-podium-section mb-5">
+            <div class="row justify-content-center align-items-end g-4">
 
-            <div class="col-xl-3 col-md-4 col-sm-6">
-                <div class="arcana-stat-card text-center">
-                    <div class="arcana-stat-label">SOLVED BY YOU</div>
-                    <div class="arcana-stat-value">{{ solved_challenges|length }}</div>
-                </div>
-            </div>
+                {% for entry in scoreboard_data|slice:":3" %}
+                    <div class="col-lg-3 col-md-4 col-sm-6
+                        {% if forloop.counter == 1 %}order-lg-2{% elif forloop.counter == 2 %}order-lg-1{% else %}order-lg-3{% endif %}">
+                        
+                        <div class="arcana-podium-card rank-{{ forloop.counter }}">
+                            <div class="podium-rank-badge">#{{ forloop.counter }}</div>
 
-            <div class="col-xl-3 col-md-4 col-sm-6">
-                <div class="arcana-stat-card text-center">
-                    <div class="arcana-stat-label">PROGRESS</div>
-                    <div class="arcana-stat-value">
-                        {% if challenges.count %}
-                            {% widthratio solved_challenges|length challenges.count 100 %}%
-                        {% else %}
-                            0%
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Cards -->
-        <section class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4 justify-content-center">
-            {% for challenge in challenges %}
-                <div class="col d-flex justify-content-center">
-                    <div class="arcana-card {% if challenge.id in solved_challenges %}arcana-card-solved{% endif %}">
-                        <div class="arcana-inner">
-
-                            <!-- ornaments -->
-                            <div class="arc-ornament top-l"></div>
-                            <div class="arc-ornament top-r"></div>
-                            <div class="arc-ornament bot-l"></div>
-                            <div class="arc-ornament bot-r"></div>
-
-                            <!-- header -->
-                            <div class="arc-card-header d-flex justify-content-between align-items-center w-100 px-3 pt-3">
-                                <span class="arc-cat">{{ challenge.kategoriya|title|default:"General" }}</span>
-                                <div class="arc-pts">
-                                    <i class="bi bi-pentagon-fill text-gold me-1"></i>
-                                    <span>{{ challenge.ochko }}</span>
-                                </div>
-                            </div>
-
-                            <!-- symbol -->
-                            <div class="arc-symbol-area">
-                                <div class="arc-icon">
-                                    {% if challenge.id in solved_challenges %}
-                                        <i class="bi bi-stars solved-glow-icon"></i>
-                                    {% else %}
-                                        <i class="bi bi-eye-slash active-eye-icon"></i>
-                                    {% endif %}
-                                </div>
-
-                                {% if challenge.id in solved_challenges %}
-                                    <div class="solved-aura"></div>
+                            <div class="podium-avatar-wrap">
+                                {% if entry.user.profil.img %}
+                                    <img src="{{ entry.user.profil.img.url }}" alt="{{ entry.user.username }}" class="podium-avatar">
                                 {% else %}
-                                    <div class="eye-aura"></div>
+                                    <img src="{% static 'images/arcana.jpg' %}" alt="Default" class="podium-avatar">
                                 {% endif %}
+                                <div class="podium-avatar-ring"></div>
                             </div>
 
-                            <!-- info -->
-                            <div class="arc-info text-center px-3">
-                                <h5 class="arc-name">{{ challenge.nomi|upper }}</h5>
+                            <h4 class="podium-username text-truncate mb-2">{{ entry.user.username|upper }}</h4>
 
-                                <div class="arc-rank mb-2">
-                                    {% if challenge.qiyinlik == 'easy' %}
-                                        <span class="difficulty easy">THE FOOL</span>
-                                    {% elif challenge.qiyinlik == 'medium' %}
-                                        <span class="difficulty medium">THE MAGICIAN</span>
-                                    {% elif challenge.qiyinlik == 'hard' %}
-                                        <span class="difficulty hard">THE HIEROPHANT</span>
-                                    {% else %}
-                                        <span class="difficulty medium">THE ARCANA</span>
-                                    {% endif %}
-                                </div>
-
-                                <div class="difficulty-dots mb-3">
-                                    <span class="dot {% if challenge.qiyinlik == 'easy' or challenge.qiyinlik == 'medium' or challenge.qiyinlik == 'hard' %}active-easy{% endif %}"></span>
-                                    <span class="dot {% if challenge.qiyinlik == 'medium' or challenge.qiyinlik == 'hard' %}active-medium{% endif %}"></span>
-                                    <span class="dot {% if challenge.qiyinlik == 'hard' %}active-hard{% endif %}"></span>
-                                </div>
+                            <div class="podium-country mb-2">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                {{ entry.user.profil.country|default:"Unknown" }}
                             </div>
 
-                            <!-- footer -->
-                            <div class="arc-footer w-100 px-3 pb-3 mt-auto">
-                                {% if challenge.id in solved_challenges %}
-                                    <a href="{% url 'challenge_detail' challenge.id %}" class="arc-btn btn-solved">
-                                        COMPROMISED
-                                    </a>
-                                {% else %}
-                                    <a href="{% url 'challenge_detail' challenge.id %}" class="arc-btn">
-                                        REVEAL TRUTH
-                                    </a>
-                                {% endif %}
+                            <div class="podium-score">
+                                <span class="score-number">{{ entry.total_score }}</span>
+                                <span class="score-label">PTS</span>
                             </div>
 
+                            <div class="podium-meta mt-3">
+                                <span class="meta-pill success-pill">{{ entry.solved_count }} SOLVED</span>
+                                <span class="meta-pill danger-pill">
+                                    {% if entry.penalty > 0 %}-{{ entry.penalty }} PEN{% else %}0 PEN{% endif %}
+                                </span>
+                            </div>
                         </div>
                     </div>
+                {% endfor %}
+
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- TABLE -->
+        <section class="arcana-panel">
+            <div class="arcana-panel-top">
+                <div class="arcana-panel-title">
+                    <span class="arcana-panel-dot"></span>
+                    THE GRAND ASCENSION
                 </div>
-            {% empty %}
-                <div class="col-12">
-                    <div class="arcana-empty-panel text-center">
-                        <i class="bi bi-moon-stars arcana-empty-icon d-block mb-3"></i>
-                        <h3 class="arcana-empty-title">NO CHALLENGES FOUND</h3>
-                        <p class="arcana-empty-text mb-0">The stars are silent. No challenges have been placed in this ritual yet.</p>
-                    </div>
-                </div>
-            {% endfor %}
+                <div class="arcana-panel-side-text">ARCANASEC</div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table arcana-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="text-center">RANK</th>
+                            <th>ASCENDANT</th>
+                            <th>ORIGIN</th>
+                            <th class="text-center">REVELATIONS</th>
+                            <th class="text-center">PENALTY</th>
+                            <th class="text-center">ESSENCE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in scoreboard_data %}
+                        <tr class="{% if item.user == request.user %}current-user-row{% endif %}">
+                            <td class="text-center rank-cell">
+                                <div class="rank-badge">{{ forloop.counter }}</div>
+                            </td>
+
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="avatar-frame">
+                                        {% if item.user.profil.img %}
+                                            <img src="{{ item.user.profil.img.url }}" alt="{{ item.user.username }}" class="solver-img">
+                                        {% else %}
+                                            <img src="{% static 'images/arcana.jpg' %}" alt="Default" class="solver-img">
+                                        {% endif %}
+                                        <div class="frame-glint"></div>
+                                    </div>
+
+                                    <div class="username-wrap">
+                                        <span class="username">{{ item.user.username }}</span>
+                                        {% if item.user == request.user %}
+                                            <span class="self-tag">YOU</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="origin-cell">
+                                <span class="country">
+                                    <i class="bi bi-geo-alt me-1"></i>
+                                    {{ item.user.profil.country|default:"Unknown" }}
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                <span class="count-value text-success">{{ item.solved_count }}</span>
+                            </td>
+
+                            <td class="text-center">
+                                <span class="count-value text-danger">
+                                    {% if item.penalty > 0 %}-{{ item.penalty }}{% else %}0{% endif %}
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                <div class="total-score-box">
+                                    <span class="score {% if item.total_score < 0 %}text-danger{% else %}text-gold{% endif %}">
+                                        {{ item.total_score }}
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <div class="empty-message">NO ASCENDANTS RECORDED YET...</div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </section>
 
     </div>
 </div>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600&family=Share+Tech+Mono&display=swap');
 
     :root {
         --arc-gold: #d4af37;
@@ -153,7 +167,7 @@
         --arc-bg: #050505;
     }
 
-    .arcana-contest-challenges-page {
+    .arcana-scoreboard-page {
         position: relative;
         min-height: 100vh;
         background:
@@ -183,11 +197,10 @@
         pointer-events: none;
     }
 
-    .arcana-challenges-hero {
+    .arcana-scoreboard-hero {
         position: relative;
         z-index: 2;
-        padding: 10px 0 20px;
-        margin-bottom: 10px;
+        padding: 10px 0 24px;
     }
 
     .arcana-overline {
@@ -202,7 +215,7 @@
     .arcana-page-title {
         font-family: 'Cinzel', serif;
         color: var(--arc-text);
-        font-size: clamp(2rem, 4vw, 3.8rem);
+        font-size: clamp(2rem, 4vw, 3.9rem);
         font-weight: 700;
         letter-spacing: 0.10rem;
         text-transform: uppercase;
@@ -227,270 +240,363 @@
         line-height: 1.8;
     }
 
-    .arcana-stat-card {
+    .arcana-podium-card {
+        position: relative;
         border: 1px solid var(--arc-line);
-        border-radius: 20px;
+        border-radius: 24px;
         background: rgba(255,255,255,0.02);
-        padding: 22px 18px;
+        padding: 28px 20px 24px;
+        text-align: center;
         box-shadow:
-            inset 0 0 14px rgba(212,175,55,0.02),
-            0 0 20px rgba(0,0,0,0.16);
+            0 12px 30px rgba(0,0,0,0.35),
+            0 0 25px rgba(212,175,55,0.04);
+        backdrop-filter: blur(3px);
+        transition: 0.3s ease;
+        overflow: hidden;
+    }
+
+    .arcana-podium-card:hover {
+        transform: translateY(-6px);
+        box-shadow:
+            0 16px 35px rgba(0,0,0,0.45),
+            0 0 28px rgba(212,175,55,0.08);
+    }
+
+    .rank-1 {
+        min-height: 350px;
+        border-color: rgba(212, 175, 55, 0.35);
+        box-shadow:
+            0 16px 40px rgba(0,0,0,0.45),
+            0 0 30px rgba(212,175,55,0.12);
+    }
+
+    .rank-2 {
+        min-height: 320px;
+        border-color: rgba(192,192,192,0.22);
+    }
+
+    .rank-3 {
+        min-height: 300px;
+        border-color: rgba(205,127,50,0.22);
+    }
+
+    .podium-rank-badge {
+        position: absolute;
+        top: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: 'Cinzel', serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--arc-gold);
+        text-shadow: 0 0 12px rgba(212, 175, 55, 0.25);
+    }
+
+    .podium-avatar-wrap {
+        position: relative;
+        width: 96px;
+        height: 96px;
+        margin: 36px auto 18px;
+    }
+
+    .rank-1 .podium-avatar-wrap {
+        width: 112px;
+        height: 112px;
+    }
+
+    .podium-avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        position: relative;
+        z-index: 2;
+        border: 2px solid rgba(212,175,55,0.30);
+        background: #000;
+    }
+
+    .podium-avatar-ring {
+        position: absolute;
+        inset: -6px;
+        border-radius: 50%;
+        border: 1px solid rgba(212,175,55,0.22);
+        box-shadow: 0 0 18px rgba(212,175,55,0.10);
+    }
+
+    .podium-username {
+        font-family: 'Cinzel', serif;
+        color: #fff;
+        font-size: 1.05rem;
+        letter-spacing: 0.08rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .podium-country {
+        color: var(--arc-muted);
+        font-family: 'Playfair Display', serif;
+        font-size: 0.88rem;
+    }
+
+    .podium-score {
+        margin-top: 12px;
+    }
+
+    .score-number {
+        font-family: 'Cinzel', serif;
+        font-weight: 800;
+        font-size: 2rem;
+        color: var(--arc-gold);
+        text-shadow: 0 0 12px rgba(212,175,55,0.15);
+    }
+
+    .score-label {
+        color: var(--arc-muted);
+        font-family: 'Cinzel', serif;
+        font-size: 0.8rem;
+        margin-left: 4px;
+        letter-spacing: 0.08rem;
+    }
+
+    .podium-meta {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .meta-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 12px;
+        border-radius: 999px;
+        font-family: 'Cinzel', serif;
+        font-size: 0.66rem;
+        letter-spacing: 0.08rem;
+        border: 1px solid transparent;
+    }
+
+    .success-pill {
+        color: #8ef0ae;
+        background: rgba(55,115,77,0.15);
+        border-color: rgba(126,240,165,0.16);
+    }
+
+    .danger-pill {
+        color: #ff9d9d;
+        background: rgba(127,42,42,0.15);
+        border-color: rgba(255,140,140,0.16);
+    }
+
+    .arcana-panel {
+        position: relative;
+        z-index: 2;
+        border: 1px solid var(--arc-line);
+        border-radius: 26px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.02);
+        box-shadow:
+            0 10px 30px rgba(0,0,0,0.4),
+            0 0 28px rgba(212,175,55,0.04);
         backdrop-filter: blur(3px);
     }
 
-    .arcana-stat-label {
+    .arcana-panel-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 22px 24px;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.14);
+        background: rgba(255,255,255,0.01);
+    }
+
+    .arcana-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
         color: var(--arc-gold);
         font-family: 'Cinzel', serif;
-        font-size: 0.78rem;
-        letter-spacing: 0.14rem;
-        margin-bottom: 10px;
-        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.10rem;
+        font-size: 0.96rem;
     }
 
-    .arcana-stat-value {
-        color: var(--arc-text);
+    .arcana-panel-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--arc-gold);
+        box-shadow: 0 0 14px rgba(212, 175, 55, 0.45);
+    }
+
+    .arcana-panel-side-text {
+        color: rgba(212, 175, 55, 0.45);
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.8rem;
+        letter-spacing: 0.15rem;
+    }
+
+    .arcana-table {
+        margin-bottom: 0;
+        background: transparent !important;
+        --bs-table-bg: transparent;
+    }
+
+    .arcana-table thead th {
+        background: rgba(20,20,20,0.45);
+        color: #d4af37;
         font-family: 'Cinzel', serif;
-        font-size: 1.8rem;
+        font-size: 0.74rem;
+        letter-spacing: 0.12rem;
+        padding: 20px;
+        border: none;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .arcana-table tbody tr {
+        transition: 0.3s;
+        border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .arcana-table tbody tr:hover {
+        background: rgba(212, 175, 55, 0.05);
+    }
+
+    .current-user-row {
+        background: rgba(212, 175, 55, 0.09) !important;
+    }
+
+    .arcana-table td {
+        padding: 18px 20px;
+        vertical-align: middle;
+        color: var(--arc-text);
+        background: transparent;
+    }
+
+    .rank-badge {
+        font-family: 'Cinzel', serif;
         font-weight: 700;
-        text-shadow: 0 0 10px rgba(212, 175, 55, 0.08);
+        color: #888;
+        font-size: 1.1rem;
     }
 
-    .arcana-card {
-        width: 100%;
-        max-width: 270px;
-        min-height: 390px;
-        background: rgba(15, 15, 15, 0.88);
-        border: 1px solid #2c2c2c;
-        border-radius: 14px;
-        padding: 10px;
-        transition: 0.4s ease;
+    tbody tr:nth-child(1) .rank-badge {
+        color: #d4af37;
+        font-size: 1.4rem;
+        text-shadow: 0 0 10px rgba(212,175,55,0.5);
+    }
+
+    tbody tr:nth-child(2) .rank-badge {
+        color: #c0c0c0;
+    }
+
+    tbody tr:nth-child(3) .rank-badge {
+        color: #cd7f32;
+    }
+
+    .avatar-frame {
         position: relative;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+        width: 46px;
+        height: 46px;
+        padding: 3px;
+        background: linear-gradient(135deg, #d4af37, transparent);
+        border-radius: 50%;
+        flex-shrink: 0;
     }
 
-    .arcana-card:hover {
-        transform: translateY(-10px);
-        border-color: var(--arc-gold);
-        box-shadow:
-            0 14px 35px rgba(0,0,0,0.65),
-            0 0 24px rgba(212,175,55,0.08);
-    }
-
-    .arcana-card-solved {
-        border-color: rgba(25, 135, 84, 0.55);
-        box-shadow:
-            0 10px 30px rgba(0,0,0,0.45),
-            0 0 18px rgba(25, 135, 84, 0.10);
-    }
-
-    .arcana-inner {
+    .solver-img {
+        width: 100%;
         height: 100%;
-        border: 1px solid rgba(212, 175, 55, 0.18);
-        border-radius: 10px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #000;
+    }
+
+    .frame-glint {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .username-wrap {
         display: flex;
         flex-direction: column;
-        position: relative;
-        background:
-            radial-gradient(circle at top, rgba(212,175,55,0.05), transparent 35%),
-            linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
     }
 
-    .arc-ornament {
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        border: 1px solid #d4af37;
-        opacity: 0.65;
-    }
-
-    .top-l { top: 5px; left: 5px; border-right: 0; border-bottom: 0; }
-    .top-r { top: 5px; right: 5px; border-left: 0; border-bottom: 0; }
-    .bot-l { bottom: 5px; left: 5px; border-right: 0; border-top: 0; }
-    .bot-r { bottom: 5px; right: 5px; border-left: 0; border-top: 0; }
-
-    .arc-card-header {
-        position: relative;
-        z-index: 2;
-    }
-
-    .arc-cat {
-        font-family: 'Playfair Display', serif;
-        font-style: italic;
-        font-size: 0.78rem;
-        color: #d4af37;
-        opacity: 0.85;
-        font-weight: 400;
-    }
-
-    .arc-pts {
-        font-size: 0.88rem;
+    .username {
+        font-weight: 700;
+        font-size: 1rem;
         color: #fff;
-        font-family: 'Cinzel', serif;
         letter-spacing: 1px;
+        font-family: 'Cinzel', serif;
+    }
+
+    .self-tag {
+        font-size: 0.62rem;
+        color: #d4af37;
+        font-family: 'Cinzel', serif;
+        letter-spacing: 0.08rem;
+    }
+
+    .origin-cell .country {
+        font-size: 0.82rem;
+        color: #aaa;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .count-value {
+        font-weight: 700;
+        font-size: 1.08rem;
+        font-family: 'Cinzel', serif;
+    }
+
+    .total-score-box {
+        display: inline-block;
+        padding: 7px 16px;
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        border-radius: 8px;
+        min-width: 78px;
+        background: rgba(255,255,255,0.015);
     }
 
     .text-gold {
         color: #d4af37;
     }
 
-    .arc-symbol-area {
-        flex: 1;
-        min-height: 130px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-    }
-
-    .active-eye-icon {
-        color: #d4af37;
-        font-size: 2.9rem;
-        filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.8));
-        z-index: 2;
-    }
-
-    .solved-glow-icon {
-        color: #d4af37;
-        font-size: 3rem;
-        filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.9));
-        z-index: 2;
-    }
-
-    .eye-aura {
-        position: absolute;
-        width: 100px;
-        height: 100px;
-        background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
-        z-index: 1;
-    }
-
-    .solved-aura {
-        position: absolute;
-        width: 110px;
-        height: 110px;
-        background: radial-gradient(circle, rgba(25, 135, 84, 0.18) 0%, transparent 70%);
-        z-index: 1;
-    }
-
-    .arc-info {
-        position: relative;
-        z-index: 2;
-    }
-
-    .arc-name {
+    .score {
+        font-size: 1.15rem;
+        font-weight: 900;
         font-family: 'Cinzel', serif;
-        color: #fff;
-        font-weight: 700;
-        font-size: 1.05rem;
+    }
+
+    .empty-message {
+        font-style: italic;
+        color: #666;
         letter-spacing: 2px;
-        margin-bottom: 8px;
-        line-height: 1.5;
-        min-height: 52px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .arc-rank {
         font-family: 'Cinzel', serif;
-        letter-spacing: 1px;
-        min-height: 24px;
-    }
-
-    .difficulty {
-        font-size: 0.72rem;
-        letter-spacing: 0.08rem;
-    }
-
-    .difficulty.easy { color: #28a745; }
-    .difficulty.medium { color: #ffc107; }
-    .difficulty.hard { color: #dc3545; }
-
-    .difficulty-dots .dot {
-        height: 6px;
-        width: 15px;
-        background: #30363d;
-        display: inline-block;
-        margin: 0 2px;
-        border-radius: 2px;
-    }
-
-    .active-easy { background: #28a745 !important; box-shadow: 0 0 5px #28a745; }
-    .active-medium { background: #ffc107 !important; box-shadow: 0 0 5px #ffc107; }
-    .active-hard { background: #dc3545 !important; box-shadow: 0 0 5px #dc3545; }
-
-    .arc-footer {
-        position: relative;
-        z-index: 2;
-    }
-
-    .arc-btn {
-        display: block;
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid #d4af37;
-        color: #d4af37;
-        text-align: center;
-        text-decoration: none;
-        font-family: 'Cinzel', serif;
-        font-size: 0.72rem;
-        font-weight: 600;
-        letter-spacing: 2px;
-        border-radius: 8px;
-        transition: 0.3s;
-        background: rgba(212, 175, 55, 0.03);
-    }
-
-    .arc-btn:hover {
-        background: #d4af37;
-        color: #000;
-        box-shadow: 0 0 20px rgba(212, 175, 55, 0.16);
-    }
-
-    .btn-solved {
-        border-color: #198754;
-        color: #198754;
-        background: rgba(25, 135, 84, 0.06);
-    }
-
-    .btn-solved:hover {
-        background: #198754;
-        color: #fff;
-        box-shadow: 0 0 20px rgba(25, 135, 84, 0.18);
-    }
-
-    .arcana-empty-panel {
-        border: 1px solid var(--arc-line);
-        border-radius: 24px;
-        background: rgba(255,255,255,0.02);
-        padding: 50px 20px;
-        box-shadow: 0 0 28px rgba(212,175,55,0.04);
-    }
-
-    .arcana-empty-icon {
-        font-size: 2.4rem;
-        color: rgba(212, 175, 55, 0.7);
-        text-shadow: 0 0 16px rgba(212, 175, 55, 0.28);
-    }
-
-    .arcana-empty-title {
-        color: var(--arc-text);
-        font-family: 'Cinzel', serif;
-        font-size: 1.3rem;
-        letter-spacing: 0.08rem;
-        margin-bottom: 10px;
-    }
-
-    .arcana-empty-text {
-        color: var(--arc-muted);
-        font-family: 'Inter', sans-serif;
-        font-size: 0.96rem;
     }
 
     @media (max-width: 991px) {
         .arcana-page-title {
             font-size: 2.2rem;
+        }
+
+        .arcana-panel-top {
+            padding: 18px 18px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .origin-cell {
+            display: none;
+        }
+
+        .arcana-table thead th:nth-child(3) {
+            display: none;
         }
     }
 
@@ -504,12 +610,14 @@
             font-size: 0.92rem;
         }
 
-        .arcana-card {
-            max-width: 100%;
+        .arcana-panel-top {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
         }
 
-        .arcana-stat-value {
-            font-size: 1.5rem;
+        .score-number {
+            font-size: 1.6rem;
         }
     }
 </style>
