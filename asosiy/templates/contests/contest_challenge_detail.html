@@ -1,0 +1,478 @@
+{% extends 'asosiy/asosiy_sahifa.html' %}
+{% load static %}
+
+{% block content %}
+<div class="arcana-detail-page">
+    <div class="arcana-bg-layer"></div>
+    <div class="arcana-noise-layer"></div>
+
+    <div class="container py-5 position-relative">
+
+        <!-- Back Link -->
+        <div class="mb-4 text-start">
+            <a href="{% url 'contest_challenges' contest.id %}" class="arcana-back-link">
+                <i class="bi bi-arrow-left-short"></i> RETURN TO CONTEST CHALLENGES
+            </a>
+        </div>
+
+        <div class="row g-5">
+            <!-- LEFT -->
+            <div class="col-lg-5">
+                <div class="arcana-main-card">
+                    <div class="arcana-inner">
+                        <div class="arc-ornament top-l"></div>
+                        <div class="arc-ornament top-r"></div>
+                        <div class="arc-ornament bot-l"></div>
+                        <div class="arc-ornament bot-r"></div>
+
+                        <div class="arc-card-content text-center">
+                            <div class="arc-cat-top">{{ challenge.kategoriya|title|default:"General" }}</div>
+
+                            <div class="arc-symbol-large my-4">
+                                <div class="symbol-frame">
+                                    {% if bloklangan %}
+                                        <i class="bi bi-lock-fill text-danger"></i>
+                                    {% else %}
+                                        <i class="bi bi-shield-lock-fill text-gold"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="symbol-aura"></div>
+                            </div>
+
+                            <h2 class="arc-title-main">{{ challenge.nomi|upper }}</h2>
+
+                            <div class="arc-stats-grid mt-4">
+                                <div class="stat-item">
+                                    <span class="label">RANK</span>
+                                    <span class="value">{{ challenge.get_qiyinlik_display|upper }}</span>
+                                </div>
+                                <div class="stat-divider"></div>
+                                <div class="stat-item">
+                                    <span class="label">POINTS</span>
+                                    <span class="value text-gold">{{ challenge.ochko }}</span>
+                                </div>
+                                <div class="stat-divider"></div>
+                                <div class="stat-item">
+                                    <span class="label">SOLVERS</span>
+                                    <span class="value">{{ challenge.solved_count|default:0 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT -->
+            <div class="col-lg-7">
+                <div class="arcana-details-panel">
+                    <div class="panel-header mb-4">
+                        <h4 class="panel-title">THE REVELATION</h4>
+                        <div class="arcana-divider-sm"></div>
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="description-container mb-4">
+                            <p class="description-text">{{ challenge.tavsif|linebreaksbr }}</p>
+                        </div>
+
+                        {% if challenge.fayl %}
+                        <div class="mt-4 text-start">
+                            <a href="{{ challenge.fayl.url }}" download class="arcana-download-btn">
+                                <i class="bi bi-download"></i> DOWNLOAD ARTIFACT
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        <div class="submission-section mt-5">
+                            <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                                <span class="attempts-count">ATTEMPTS: {{ urinishlar_soni }} / {{ max_urinish }}</span>
+                                <span class="author-tag">CREATOR: {{ challenge.author.username }}</span>
+                            </div>
+
+                            {% if bloklangan %}
+                                <div class="arcana-input-group blocked">
+                                    <input type="text" class="form-control" value="PATHWAY BLOCKED" readonly>
+                                    <button class="btn" disabled><i class="bi bi-slash-circle"></i></button>
+                                </div>
+                            {% else %}
+                                <form method="post" action="{% url 'yechish' challenge.id %}">
+                                    {% csrf_token %}
+                                    <div class="arcana-input-group">
+                                        <input type="text" name="flag" class="form-control" placeholder="ENTER THE SECRET KEY..." required>
+                                        <button type="submit" class="btn"><i class="bi bi-key-fill"></i> SUBMIT</button>
+                                    </div>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {% if first_solvers_data %}
+                <div class="arcana-solvers-panel mt-4">
+                    <h5 class="solvers-title mb-3">FIRST ASCENDANTS</h5>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-borderless arcana-mini-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>ASCENDANT</th>
+                                    <th>ORIGIN</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for solver in first_solvers_data %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td class="d-flex align-items-center gap-2">
+                                        <img src="{% if solver.profil.img %}{{ solver.profil.img.url }}{% else %}{% static 'images/arcana.jpg' %}{% endif %}" class="solver-img" alt="avatar">
+                                        <span>{{ solver.username }}</span>
+                                    </td>
+                                    <td>{{ solver.profil.country|default:"Unknown" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&family=Share+Tech+Mono&display=swap');
+
+    :root {
+        --arc-gold: #d4af37;
+        --arc-text: #f3efe3;
+        --arc-muted: #aa9f86;
+        --arc-line: rgba(212, 175, 55, 0.18);
+    }
+
+    .arcana-detail-page {
+        position: relative;
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at top center, rgba(212, 175, 55, 0.08), transparent 28%),
+            radial-gradient(circle at 20% 20%, rgba(85, 60, 20, 0.10), transparent 20%),
+            linear-gradient(180deg, #030303 0%, #070707 50%, #050505 100%);
+        overflow: hidden;
+    }
+
+    .arcana-bg-layer {
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+        background-size: 80px 80px;
+        opacity: 0.10;
+        pointer-events: none;
+    }
+
+    .arcana-noise-layer {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 60%);
+        mix-blend-mode: screen;
+        opacity: 0.20;
+        pointer-events: none;
+    }
+
+    .arcana-back-link {
+        color: var(--arc-gold);
+        text-decoration: none;
+        font-family: 'Cinzel', serif;
+        font-size: 0.8rem;
+        letter-spacing: 2px;
+        transition: 0.3s;
+        opacity: 0.8;
+    }
+
+    .arcana-back-link:hover {
+        opacity: 1;
+        letter-spacing: 3px;
+        color: var(--arc-gold);
+    }
+
+    .arcana-main-card,
+    .arcana-details-panel,
+    .arcana-solvers-panel {
+        background: rgba(15, 15, 15, 0.35);
+        border: 1px solid rgba(212, 175, 55, 0.12);
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+        backdrop-filter: blur(4px);
+    }
+
+    .arcana-main-card {
+        padding: 15px;
+        position: sticky;
+        top: 100px;
+    }
+
+    .arcana-inner {
+        border: 1px solid rgba(212, 175, 55, 0.18);
+        border-radius: 12px;
+        padding: 40px 20px;
+        position: relative;
+    }
+
+    .arc-ornament {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border: 1px solid #d4af37;
+        opacity: 0.5;
+    }
+
+    .top-l { top: 6px; left: 6px; border-right: 0; border-bottom: 0; }
+    .top-r { top: 6px; right: 6px; border-left: 0; border-bottom: 0; }
+    .bot-l { bottom: 6px; left: 6px; border-right: 0; border-top: 0; }
+    .bot-r { bottom: 6px; right: 6px; border-left: 0; border-top: 0; }
+
+    .arc-cat-top {
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        color: #d4af37;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+    }
+
+    .arc-symbol-large {
+        position: relative;
+        display: inline-block;
+    }
+
+    .symbol-frame {
+        font-size: 4rem;
+        position: relative;
+        z-index: 2;
+        filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4));
+    }
+
+    .text-gold { color: #d4af37; }
+
+    .symbol-aura {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+    }
+
+    .arc-title-main {
+        font-family: 'Cinzel', serif;
+        font-weight: 700;
+        letter-spacing: 4px;
+        color: #fff;
+        margin-top: 15px;
+        font-size: 2rem;
+    }
+
+    .arc-stats-grid {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-item .label {
+        font-size: 0.65rem;
+        color: #888;
+        letter-spacing: 1px;
+        font-family: 'Cinzel', serif;
+    }
+
+    .stat-item .value {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #fff;
+        font-family: 'Cinzel', serif;
+    }
+
+    .stat-divider {
+        width: 1px;
+        height: 30px;
+        background: rgba(212, 175, 55, 0.2);
+    }
+
+    .arcana-details-panel {
+        padding: 30px;
+    }
+
+    .panel-title {
+        color: #d4af37;
+        letter-spacing: 3px;
+        font-size: 1.1rem;
+        text-align: left;
+        font-family: 'Cinzel', serif;
+    }
+
+    .arcana-divider-sm {
+        width: 40px;
+        height: 2px;
+        background: #d4af37;
+        margin: 10px 0;
+    }
+
+    .description-container {
+        text-align: left;
+        padding: 10px 0;
+    }
+
+    .description-text {
+        font-family: 'Playfair Display', serif;
+        line-height: 1.8;
+        font-size: 1.08rem;
+        color: #dfdfdf;
+        font-weight: 400;
+    }
+
+    .arcana-download-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        border: 1px solid #d4af37;
+        color: #d4af37;
+        text-decoration: none;
+        font-size: 0.75rem;
+        letter-spacing: 2px;
+        transition: 0.3s;
+        border-radius: 8px;
+        font-family: 'Cinzel', serif;
+    }
+
+    .arcana-download-btn:hover {
+        background: #d4af37;
+        color: #000;
+    }
+
+    .attempts-count,
+    .author-tag {
+        color: var(--arc-muted);
+        font-size: 0.78rem;
+        letter-spacing: 1px;
+        font-family: 'Share Tech Mono', monospace;
+    }
+
+    .arcana-input-group {
+        display: flex;
+        border: 1px solid #2c2c2c;
+        background: rgba(0,0,0,0.45);
+        padding: 5px;
+        border-radius: 10px;
+        transition: 0.3s;
+    }
+
+    .arcana-input-group:focus-within {
+        border-color: #d4af37;
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+
+    .arcana-input-group input {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-family: 'Cinzel', serif;
+        font-size: 0.85rem;
+    }
+
+    .arcana-input-group input:focus {
+        box-shadow: none;
+        background: transparent;
+        color: #fff;
+    }
+
+    .arcana-input-group .btn {
+        background: #d4af37;
+        color: #000;
+        font-weight: 700;
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-family: 'Cinzel', serif;
+        border: none;
+    }
+
+    .arcana-input-group.blocked .btn {
+        background: #444;
+        color: #999;
+    }
+
+    .arcana-solvers-panel {
+        padding: 20px;
+    }
+
+    .solvers-title {
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+        color: #d4af37;
+        text-align: left;
+        font-family: 'Cinzel', serif;
+    }
+
+    .arcana-mini-table {
+        font-size: 0.82rem;
+        background: transparent !important;
+        --bs-table-bg: transparent;
+    }
+
+    .arcana-mini-table th {
+        color: #d4af37;
+        font-family: 'Cinzel', serif;
+        font-size: 0.72rem;
+        letter-spacing: 1px;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+    }
+
+    .arcana-mini-table td {
+        color: #ddd;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .solver-img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1px solid #d4af37;
+        object-fit: cover;
+    }
+
+    @media (max-width: 991px) {
+        .arcana-main-card {
+            position: static;
+        }
+
+        .arc-title-main {
+            font-size: 1.6rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .arc-stats-grid {
+            gap: 12px;
+        }
+
+        .stat-divider {
+            display: none;
+        }
+
+        .arcana-details-panel {
+            padding: 20px;
+        }
+
+        .arcana-input-group {
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+</style>
+{% endblock %}

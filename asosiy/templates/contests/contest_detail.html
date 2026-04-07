@@ -2,8 +2,7 @@
 {% load static %}
 
 {% block content %}
-
-<div class="arcanasec-detail-page">
+<div class="arcana-contest-detail-page">
     <div class="arcana-bg-layer"></div>
     <div class="arcana-noise-layer"></div>
 
@@ -12,7 +11,7 @@
         <!-- HERO -->
         <section class="arcana-hero-section text-center">
             <p class="arcana-overline mb-2">THE RITUAL OF ASCENSION</p>
-            <h1 class="arcana-contest-title">{{ contest.nomi|upper }}</h1>
+            <h1 class="arcana-page-title">{{ contest.nomi|upper }}</h1>
             <div class="arcana-line mx-auto my-4"></div>
             <p class="arcana-hero-subtitle mx-auto">
                 Enter the sacred arena, study the ritual, and prepare to challenge the unknown.
@@ -37,10 +36,9 @@
         <!-- MAIN GRID -->
         <div class="row g-4 align-items-start mt-2">
 
-            <!-- LEFT SIDE -->
+            <!-- LEFT -->
             <div class="col-xl-8">
                 <div class="arcana-panel arcana-main-panel">
-
                     <div class="arcana-panel-top">
                         <div class="arcana-panel-title">
                             <span class="arcana-panel-dot"></span>
@@ -67,15 +65,14 @@
                             {% endif %}
                         </div>
                     </div>
-
                 </div>
             </div>
 
-            <!-- RIGHT SIDE -->
+            <!-- RIGHT -->
             <div class="col-xl-4">
                 <div class="arcana-side-stack">
 
-                    <!-- INFO PANEL -->
+                    <!-- INFO -->
                     <div class="arcana-panel arcana-side-panel mb-4">
                         <div class="arcana-panel-top">
                             <div class="arcana-panel-title">
@@ -102,7 +99,7 @@
                         </div>
                     </div>
 
-                    <!-- ACTION PANEL -->
+                    <!-- ACTION -->
                     <div class="arcana-panel arcana-side-panel">
                         <div class="arcana-panel-top">
                             <div class="arcana-panel-title">
@@ -152,7 +149,6 @@
 
     :root {
         --arc-bg: #050505;
-        --arc-bg-soft: #0b0b0d;
         --arc-gold: #d4af37;
         --arc-gold-soft: rgba(212, 175, 55, 0.14);
         --arc-gold-strong: rgba(212, 175, 55, 0.28);
@@ -161,7 +157,7 @@
         --arc-line: rgba(212, 175, 55, 0.18);
     }
 
-    .arcanasec-detail-page {
+    .arcana-contest-detail-page {
         position: relative;
         min-height: 100vh;
         background:
@@ -207,7 +203,7 @@
         opacity: 0.95;
     }
 
-    .arcana-contest-title {
+    .arcana-page-title {
         font-family: 'Cinzel', serif;
         color: var(--arc-text);
         font-size: clamp(2.2rem, 5vw, 4.5rem);
@@ -265,8 +261,7 @@
         border-radius: 28px;
         overflow: hidden;
         background: rgba(255,255,255,0.01);
-        box-shadow:
-            0 0 40px rgba(212,175,55,0.05);
+        box-shadow: 0 0 40px rgba(212,175,55,0.05);
         backdrop-filter: blur(3px);
         height: 100%;
     }
@@ -472,7 +467,7 @@
             padding: 24px 18px 26px;
         }
 
-        .arcana-contest-title {
+        .arcana-page-title {
             font-size: 2.2rem;
         }
     }
