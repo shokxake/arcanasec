@@ -2,168 +2,515 @@
 {% load static %}
 
 {% block content %}
-<!-- Musobaqa Navbari -->
-{% include 'includes/contest_navbar.html' %}
+<div class="arcana-contest-challenges-page">
+    <div class="arcana-bg-layer"></div>
+    <div class="arcana-noise-layer"></div>
 
-<div class="contest-scoreboard-wrapper pb-5" style="background-color: #0b0c10; min-height: 100vh;">
-    <div class="container">
-        
-        <!-- TOP 3 OPERATIVES (Podium) -->
-        <div class="row mb-5 justify-content-center align-items-end g-3">
-            {% for entry in scoreboard_data|slice:":3" %}
-                <div class="col-md-3 order-{{ forloop.counter }}">
-                    <div class="podium-card rank-{{ forloop.counter }}">
-                        <div class="rank-label font-cinzel">#{{ forloop.counter }}</div>
-                        <div class="avatar-container mb-3">
-                            {% if entry.user.profil.img %}
-                                <img src="{{ entry.user.profil.img.url }}" class="podium-img">
-                            {% else %}
-                                <img src="{% static 'default_user.png' %}" class="podium-img">
-                            {% endif %}
-                            <div class="glow-ring"></div>
-                        </div>
-                        <h5 class="text-white font-mono text-truncate">{{ entry.user.username }}</h5>
-                        <div class="score-display">
-                            <span class="pts">{{ entry.total_score }}</span> <small>PTS</small>
-                        </div>
-                    </div>
+    <div class="container py-5 position-relative">
+
+        <!-- Header -->
+        <section class="arcana-challenges-hero text-center">
+            <p class="arcana-overline mb-2">THE CONTEST GRIMOIRE</p>
+            <h1 class="arcana-page-title">{{ contest.nomi|upper }} — CHALLENGES</h1>
+            <div class="arcana-line mx-auto my-4"></div>
+            <p class="arcana-hero-subtitle mx-auto">
+                Reveal the sealed tasks of this ritual and advance through the sacred path of ArcanaSec.
+            </p>
+        </section>
+
+        <!-- Stats -->
+        <section class="row g-4 mb-5 justify-content-center">
+            <div class="col-xl-3 col-md-4 col-sm-6">
+                <div class="arcana-stat-card text-center">
+                    <div class="arcana-stat-label">TOTAL TASKS</div>
+                    <div class="arcana-stat-value">{{ challenges.count }}</div>
                 </div>
-            {% endfor %}
-        </div>
+            </div>
 
-        <!-- FULL RANKING TABLE -->
-        <div class="row">
-            <div class="col-12">
-                <div class="table-terminal-container shadow-lg">
-                    <div class="terminal-header d-flex justify-content-between px-3 py-2">
-                        <span class="terminal-title"><i class="bi bi-cpu me-2"></i> SYSTEM_RANKINGS.LOG</span>
-                        <div class="terminal-dots">
-                            <span></span><span></span><span></span>
-                        </div>
-                    </div>
-                    
-                    <div class="table-responsive">
-                        <table class="table table-dark table-hover mb-0 custom-sb-table">
-                            <thead>
-                                <tr>
-                                    <th class="ps-4">RANK</th>
-                                    <th>OPERATIVE</th>
-                                    <th>COUNTRY</th>
-                                    <th class="text-center">SOLVED</th>
-                                    <th class="text-center">PENALTY</th>
-                                    <th class="text-end pe-4">TOTAL SCORE</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for entry in scoreboard_data %}
-                                <tr class="{% if entry.user == request.user %}current-user-row{% endif %}">
-                                    <td class="ps-4 align-middle">
-                                        <span class="rank-number">#{{ forloop.counter }}</span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="d-flex align-items-center">
-                                            <img src="{{ entry.user.profil.img.url|default:'/static/default_user.png' }}" class="table-avatar me-2">
-                                            <span class="username-text">{{ entry.user.username }}</span>
-                                            {% if entry.user == request.user %}
-                                                <span class="badge ms-2 bg-cyan-glow">YOU</span>
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-muted small uppercase">
-                                        {{ entry.user.profil.country|default:"N/A" }}
-                                    </td>
-                                    <td class="text-center align-middle font-mono text-success">
-                                        {{ entry.solved_count }}
-                                    </td>
-                                    <td class="text-center align-middle font-mono text-danger">
-                                        -{{ entry.penalty }}
-                                    </td>
-                                    <td class="text-end pe-4 align-middle">
-                                        <span class="final-pts fw-bold text-cyan">{{ entry.total_score }}</span>
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="6" class="text-center py-5 text-muted">No data available in the matrix.</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+            <div class="col-xl-3 col-md-4 col-sm-6">
+                <div class="arcana-stat-card text-center">
+                    <div class="arcana-stat-label">SOLVED BY YOU</div>
+                    <div class="arcana-stat-value">{{ solved_challenges|length }}</div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-4 col-sm-6">
+                <div class="arcana-stat-card text-center">
+                    <div class="arcana-stat-label">PROGRESS</div>
+                    <div class="arcana-stat-value">
+                        {% if challenges.count %}
+                            {% widthratio solved_challenges|length challenges.count 100 %}%
+                        {% else %}
+                            0%
+                        {% endif %}
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
+
+        <!-- Cards -->
+        <section class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4 justify-content-center">
+            {% for challenge in challenges %}
+                <div class="col d-flex justify-content-center">
+                    <div class="arcana-card {% if challenge.id in solved_challenges %}arcana-card-solved{% endif %}">
+                        <div class="arcana-inner">
+
+                            <!-- ornaments -->
+                            <div class="arc-ornament top-l"></div>
+                            <div class="arc-ornament top-r"></div>
+                            <div class="arc-ornament bot-l"></div>
+                            <div class="arc-ornament bot-r"></div>
+
+                            <!-- header -->
+                            <div class="arc-card-header d-flex justify-content-between align-items-center w-100 px-3 pt-3">
+                                <span class="arc-cat">{{ challenge.kategoriya|title|default:"General" }}</span>
+                                <div class="arc-pts">
+                                    <i class="bi bi-pentagon-fill text-gold me-1"></i>
+                                    <span>{{ challenge.ochko }}</span>
+                                </div>
+                            </div>
+
+                            <!-- symbol -->
+                            <div class="arc-symbol-area">
+                                <div class="arc-icon">
+                                    {% if challenge.id in solved_challenges %}
+                                        <i class="bi bi-stars solved-glow-icon"></i>
+                                    {% else %}
+                                        <i class="bi bi-eye-slash active-eye-icon"></i>
+                                    {% endif %}
+                                </div>
+
+                                {% if challenge.id in solved_challenges %}
+                                    <div class="solved-aura"></div>
+                                {% else %}
+                                    <div class="eye-aura"></div>
+                                {% endif %}
+                            </div>
+
+                            <!-- info -->
+                            <div class="arc-info text-center px-3">
+                                <h5 class="arc-name">{{ challenge.nomi|upper }}</h5>
+
+                                <div class="arc-rank mb-2">
+                                    {% if challenge.qiyinlik == 'easy' %}
+                                        <span class="difficulty easy">THE FOOL</span>
+                                    {% elif challenge.qiyinlik == 'medium' %}
+                                        <span class="difficulty medium">THE MAGICIAN</span>
+                                    {% elif challenge.qiyinlik == 'hard' %}
+                                        <span class="difficulty hard">THE HIEROPHANT</span>
+                                    {% else %}
+                                        <span class="difficulty medium">THE ARCANA</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="difficulty-dots mb-3">
+                                    <span class="dot {% if challenge.qiyinlik == 'easy' or challenge.qiyinlik == 'medium' or challenge.qiyinlik == 'hard' %}active-easy{% endif %}"></span>
+                                    <span class="dot {% if challenge.qiyinlik == 'medium' or challenge.qiyinlik == 'hard' %}active-medium{% endif %}"></span>
+                                    <span class="dot {% if challenge.qiyinlik == 'hard' %}active-hard{% endif %}"></span>
+                                </div>
+                            </div>
+
+                            <!-- footer -->
+                            <div class="arc-footer w-100 px-3 pb-3 mt-auto">
+                                {% if challenge.id in solved_challenges %}
+                                    <a href="{% url 'challenge_detail' challenge.id %}" class="arc-btn btn-solved">
+                                        COMPROMISED
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'challenge_detail' challenge.id %}" class="arc-btn">
+                                        REVEAL TRUTH
+                                    </a>
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="arcana-empty-panel text-center">
+                        <i class="bi bi-moon-stars arcana-empty-icon d-block mb-3"></i>
+                        <h3 class="arcana-empty-title">NO CHALLENGES FOUND</h3>
+                        <p class="arcana-empty-text mb-0">The stars are silent. No challenges have been placed in this ritual yet.</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </section>
+
     </div>
 </div>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Share+Tech+Mono&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
 
-    .font-mono { font-family: 'Share Tech Mono', monospace; }
-    .font-cinzel { font-family: 'Cinzel', serif; }
-    .text-cyan { color: #66fcf1; }
-
-    /* Podium Styles */
-    .podium-card {
-        background: rgba(31, 40, 51, 0.6);
-        border: 1px solid #30363d;
-        border-radius: 10px;
-        padding: 20px;
-        text-align: center;
-        position: relative;
-        transition: 0.3s;
+    :root {
+        --arc-gold: #d4af37;
+        --arc-gold-soft: rgba(212, 175, 55, 0.14);
+        --arc-gold-strong: rgba(212, 175, 55, 0.28);
+        --arc-text: #f3efe3;
+        --arc-muted: #aa9f86;
+        --arc-line: rgba(212, 175, 55, 0.18);
+        --arc-bg: #050505;
     }
-    .rank-1 { height: 240px; border-color: #d4af37; box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); z-index: 3; }
-    .rank-2 { height: 210px; border-color: #c0c0c0; }
-    .rank-3 { height: 190px; border-color: #cd7f32; }
 
-    .podium-img {
-        width: 80px; height: 80px;
-        border-radius: 50%;
-        border: 3px solid #1f2833;
+    .arcana-contest-challenges-page {
+        position: relative;
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at top center, rgba(212, 175, 55, 0.08), transparent 28%),
+            radial-gradient(circle at 20% 20%, rgba(85, 60, 20, 0.10), transparent 20%),
+            linear-gradient(180deg, #030303 0%, #070707 50%, #050505 100%);
+        overflow: hidden;
+    }
+
+    .arcana-bg-layer {
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+        background-size: 80px 80px;
+        opacity: 0.10;
+        pointer-events: none;
+    }
+
+    .arcana-noise-layer {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02), transparent 60%);
+        mix-blend-mode: screen;
+        opacity: 0.20;
+        pointer-events: none;
+    }
+
+    .arcana-challenges-hero {
+        position: relative;
+        z-index: 2;
+        padding: 10px 0 20px;
+        margin-bottom: 10px;
+    }
+
+    .arcana-overline {
+        font-family: 'Inter', sans-serif;
+        letter-spacing: 0.42rem;
+        text-transform: uppercase;
+        color: var(--arc-gold);
+        font-size: 0.76rem;
+        opacity: 0.95;
+    }
+
+    .arcana-page-title {
+        font-family: 'Cinzel', serif;
+        color: var(--arc-text);
+        font-size: clamp(2rem, 4vw, 3.8rem);
+        font-weight: 700;
+        letter-spacing: 0.10rem;
+        text-transform: uppercase;
+        text-shadow:
+            0 0 12px rgba(212, 175, 55, 0.18),
+            0 0 30px rgba(212, 175, 55, 0.08);
+        margin-bottom: 0;
+    }
+
+    .arcana-line {
+        width: 180px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--arc-gold), transparent);
+        box-shadow: 0 0 16px rgba(212, 175, 55, 0.22);
+    }
+
+    .arcana-hero-subtitle {
+        max-width: 760px;
+        color: var(--arc-muted);
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        line-height: 1.8;
+    }
+
+    .arcana-stat-card {
+        border: 1px solid var(--arc-line);
+        border-radius: 20px;
+        background: rgba(255,255,255,0.02);
+        padding: 22px 18px;
+        box-shadow:
+            inset 0 0 14px rgba(212,175,55,0.02),
+            0 0 20px rgba(0,0,0,0.16);
+        backdrop-filter: blur(3px);
+    }
+
+    .arcana-stat-label {
+        color: var(--arc-gold);
+        font-family: 'Cinzel', serif;
+        font-size: 0.78rem;
+        letter-spacing: 0.14rem;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+    }
+
+    .arcana-stat-value {
+        color: var(--arc-text);
+        font-family: 'Cinzel', serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        text-shadow: 0 0 10px rgba(212, 175, 55, 0.08);
+    }
+
+    .arcana-card {
+        width: 100%;
+        max-width: 270px;
+        min-height: 390px;
+        background: rgba(15, 15, 15, 0.88);
+        border: 1px solid #2c2c2c;
+        border-radius: 14px;
+        padding: 10px;
+        transition: 0.4s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    }
+
+    .arcana-card:hover {
+        transform: translateY(-10px);
+        border-color: var(--arc-gold);
+        box-shadow:
+            0 14px 35px rgba(0,0,0,0.65),
+            0 0 24px rgba(212,175,55,0.08);
+    }
+
+    .arcana-card-solved {
+        border-color: rgba(25, 135, 84, 0.55);
+        box-shadow:
+            0 10px 30px rgba(0,0,0,0.45),
+            0 0 18px rgba(25, 135, 84, 0.10);
+    }
+
+    .arcana-inner {
+        height: 100%;
+        border: 1px solid rgba(212, 175, 55, 0.18);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        background:
+            radial-gradient(circle at top, rgba(212,175,55,0.05), transparent 35%),
+            linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+    }
+
+    .arc-ornament {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        border: 1px solid #d4af37;
+        opacity: 0.65;
+    }
+
+    .top-l { top: 5px; left: 5px; border-right: 0; border-bottom: 0; }
+    .top-r { top: 5px; right: 5px; border-left: 0; border-bottom: 0; }
+    .bot-l { bottom: 5px; left: 5px; border-right: 0; border-top: 0; }
+    .bot-r { bottom: 5px; right: 5px; border-left: 0; border-top: 0; }
+
+    .arc-card-header {
         position: relative;
         z-index: 2;
     }
-    .rank-1 .podium-img { border-color: #d4af37; width: 100px; height: 100px; }
 
-    .rank-label {
-        position: absolute;
-        top: -15px; left: 50%;
-        transform: translateX(-50%);
-        background: #0b0c10;
-        padding: 0 15px;
-        font-size: 1.5rem;
+    .arc-cat {
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        font-size: 0.78rem;
+        color: #d4af37;
+        opacity: 0.85;
+        font-weight: 400;
+    }
+
+    .arc-pts {
+        font-size: 0.88rem;
         color: #fff;
+        font-family: 'Cinzel', serif;
+        letter-spacing: 1px;
     }
 
-    /* Table Styles */
-    .table-terminal-container {
-        background: #161b22;
-        border: 1px solid #30363d;
+    .text-gold {
+        color: #d4af37;
+    }
+
+    .arc-symbol-area {
+        flex: 1;
+        min-height: 130px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .active-eye-icon {
+        color: #d4af37;
+        font-size: 2.9rem;
+        filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.8));
+        z-index: 2;
+    }
+
+    .solved-glow-icon {
+        color: #d4af37;
+        font-size: 3rem;
+        filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.9));
+        z-index: 2;
+    }
+
+    .eye-aura {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+        z-index: 1;
+    }
+
+    .solved-aura {
+        position: absolute;
+        width: 110px;
+        height: 110px;
+        background: radial-gradient(circle, rgba(25, 135, 84, 0.18) 0%, transparent 70%);
+        z-index: 1;
+    }
+
+    .arc-info {
+        position: relative;
+        z-index: 2;
+    }
+
+    .arc-name {
+        font-family: 'Cinzel', serif;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.05rem;
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+        line-height: 1.5;
+        min-height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .arc-rank {
+        font-family: 'Cinzel', serif;
+        letter-spacing: 1px;
+        min-height: 24px;
+    }
+
+    .difficulty {
+        font-size: 0.72rem;
+        letter-spacing: 0.08rem;
+    }
+
+    .difficulty.easy { color: #28a745; }
+    .difficulty.medium { color: #ffc107; }
+    .difficulty.hard { color: #dc3545; }
+
+    .difficulty-dots .dot {
+        height: 6px;
+        width: 15px;
+        background: #30363d;
+        display: inline-block;
+        margin: 0 2px;
+        border-radius: 2px;
+    }
+
+    .active-easy { background: #28a745 !important; box-shadow: 0 0 5px #28a745; }
+    .active-medium { background: #ffc107 !important; box-shadow: 0 0 5px #ffc107; }
+    .active-hard { background: #dc3545 !important; box-shadow: 0 0 5px #dc3545; }
+
+    .arc-footer {
+        position: relative;
+        z-index: 2;
+    }
+
+    .arc-btn {
+        display: block;
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #d4af37;
+        color: #d4af37;
+        text-align: center;
+        text-decoration: none;
+        font-family: 'Cinzel', serif;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 2px;
         border-radius: 8px;
-        overflow: hidden;
+        transition: 0.3s;
+        background: rgba(212, 175, 55, 0.03);
     }
-    .terminal-header { background: #0d1117; border-bottom: 1px solid #30363d; }
-    .terminal-title { color: #45a29e; font-family: 'Share Tech Mono'; font-size: 0.8rem; }
-    .terminal-dots span {
-        height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-left: 5px;
+
+    .arc-btn:hover {
+        background: #d4af37;
+        color: #000;
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.16);
     }
-    .terminal-dots span:nth-child(1) { background: #ff5f56; }
-    .terminal-dots span:nth-child(2) { background: #ffbd2e; }
-    .terminal-dots span:nth-child(3) { background: #27c93f; }
 
-    .custom-sb-table { border-collapse: separate; border-spacing: 0; }
-    .custom-sb-table thead th {
-        background: #0d1117; color: #45a29e; font-size: 0.8rem; letter-spacing: 1px; border: none; padding: 15px 10px;
+    .btn-solved {
+        border-color: #198754;
+        color: #198754;
+        background: rgba(25, 135, 84, 0.06);
     }
-    .custom-sb-table tbody tr { border-bottom: 1px solid #21262d; transition: 0.2s; }
-    .custom-sb-table tbody tr:hover { background: rgba(102, 252, 241, 0.03); }
 
-    .current-user-row { background: rgba(102, 252, 241, 0.08) !important; }
-    .bg-cyan-glow { background: #66fcf1; color: #0b0c10; box-shadow: 0 0 10px #66fcf1; font-size: 0.6rem; }
+    .btn-solved:hover {
+        background: #198754;
+        color: #fff;
+        box-shadow: 0 0 20px rgba(25, 135, 84, 0.18);
+    }
 
-    .table-avatar { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #45a29e; }
-    .rank-number { color: #8b949e; font-family: 'Share Tech Mono'; }
-    .final-pts { font-size: 1.1rem; text-shadow: 0 0 10px rgba(102, 252, 241, 0.3); }
+    .arcana-empty-panel {
+        border: 1px solid var(--arc-line);
+        border-radius: 24px;
+        background: rgba(255,255,255,0.02);
+        padding: 50px 20px;
+        box-shadow: 0 0 28px rgba(212,175,55,0.04);
+    }
+
+    .arcana-empty-icon {
+        font-size: 2.4rem;
+        color: rgba(212, 175, 55, 0.7);
+        text-shadow: 0 0 16px rgba(212, 175, 55, 0.28);
+    }
+
+    .arcana-empty-title {
+        color: var(--arc-text);
+        font-family: 'Cinzel', serif;
+        font-size: 1.3rem;
+        letter-spacing: 0.08rem;
+        margin-bottom: 10px;
+    }
+
+    .arcana-empty-text {
+        color: var(--arc-muted);
+        font-family: 'Inter', sans-serif;
+        font-size: 0.96rem;
+    }
+
+    @media (max-width: 991px) {
+        .arcana-page-title {
+            font-size: 2.2rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .arcana-overline {
+            letter-spacing: 0.24rem;
+            font-size: 0.7rem;
+        }
+
+        .arcana-hero-subtitle {
+            font-size: 0.92rem;
+        }
+
+        .arcana-card {
+            max-width: 100%;
+        }
+
+        .arcana-stat-value {
+            font-size: 1.5rem;
+        }
+    }
 </style>
 {% endblock %}
